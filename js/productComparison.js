@@ -113,9 +113,9 @@ class ProductComparisonPage {
                 defaultDate: this.startDateInput.value,
                 maxDate: this.endDateInput.value,
                 disableMobile: false,
-                position: "below",
+                position: "auto",
                 static: true,
-                inline: true,
+                inline: false,
                 mode: "single",
                 onChange: (selectedDates, dateStr) => {
                     if (selectedDates[0]) {
@@ -131,9 +131,9 @@ class ProductComparisonPage {
                 minDate: this.startDateInput.value,
                 maxDate: "today",
                 disableMobile: false,
-                position: "below",
+                position: "auto",
                 static: true,
-                inline: true,
+                inline: false,
                 mode: "single",
                 onChange: (selectedDates, dateStr) => {
                     if (selectedDates[0]) {
