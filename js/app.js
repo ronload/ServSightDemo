@@ -104,4 +104,73 @@ class App {
 
 // 創建應用實例
 console.log('Creating app instance...');
-window.app = new App(); 
+window.app = new App();
+
+// 在頁面加載完成後執行
+document.addEventListener('DOMContentLoaded', function() {
+    // 延遲執行確保 DOM 已加載
+    setTimeout(function() {
+        // 調整日期選擇器結構
+        function adjustDateSelectorForMobile() {
+            console.log('Adjusting date selector for mobile');
+            const dateSelectors = document.querySelectorAll('.date-selector');
+            
+            dateSelectors.forEach(selector => {
+                // 檢查是否已經調整過
+                if (selector.querySelector('.date-inputs-container')) {
+                    return;
+                }
+                
+                const inputs = selector.querySelectorAll('input[type="text"]');
+                if (inputs.length < 2) {
+                    console.log('Not enough inputs found');
+                    return;
+                }
+                
+                const separator = selector.querySelector('.date-separator');
+                const button = selector.querySelector('button');
+                
+                if (!separator || !button) {
+                    console.log('Missing separator or button');
+                    return;
+                }
+                
+                // 創建一個容器用於水平排列日期輸入框
+                const dateInputsContainer = document.createElement('div');
+                dateInputsContainer.className = 'date-inputs-container';
+                
+                // 清空選擇器內容
+                const startDateInput = inputs[0];
+                const endDateInput = inputs[1];
+                
+                // 從原DOM中移除元素
+                startDateInput.parentNode.removeChild(startDateInput);
+                separator.parentNode.removeChild(separator);
+                endDateInput.parentNode.removeChild(endDateInput);
+                button.parentNode.removeChild(button);
+                
+                // 將日期輸入元素添加到容器中
+                dateInputsContainer.appendChild(startDateInput);
+                dateInputsContainer.appendChild(separator);
+                dateInputsContainer.appendChild(endDateInput);
+                
+                // 將容器和按鈕添加到選擇器中
+                selector.appendChild(dateInputsContainer);
+                selector.appendChild(button);
+                
+                console.log('Date selector restructured successfully');
+            });
+        }
+        
+        // 執行調整
+        adjustDateSelectorForMobile();
+        
+        // 當窗口大小變化時重新調整
+        window.addEventListener('resize', function() {
+            // 只在移動端視圖調整結構
+            if (window.innerWidth <= 768) {
+                adjustDateSelectorForMobile();
+            }
+        });
+    }, 300);
+}); 
