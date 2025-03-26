@@ -112,7 +112,11 @@ class ProductComparisonPage {
                 dateFormat: "Y-m-d",
                 defaultDate: this.startDateInput.value,
                 maxDate: this.endDateInput.value,
-                disableMobile: true,
+                disableMobile: false,
+                position: "below",
+                static: true,
+                inline: true,
+                mode: "single",
                 onChange: (selectedDates, dateStr) => {
                     if (selectedDates[0]) {
                         this.endDatePicker.set('minDate', dateStr);
@@ -126,7 +130,11 @@ class ProductComparisonPage {
                 defaultDate: this.endDateInput.value,
                 minDate: this.startDateInput.value,
                 maxDate: "today",
-                disableMobile: true,
+                disableMobile: false,
+                position: "below",
+                static: true,
+                inline: true,
+                mode: "single",
                 onChange: (selectedDates, dateStr) => {
                     if (selectedDates[0]) {
                         this.startDatePicker.set('maxDate', dateStr);

@@ -62,7 +62,9 @@ class OverviewPage {
                 dateFormat: "Y-m-d",
                 defaultDate: "2025-02-01",
                 maxDate: "today",
-                disableMobile: true,
+                disableMobile: "true",
+                position: "below",
+                static: true,
                 onChange: (selectedDates, dateStr) => {
                     if (selectedDates[0]) {
                         this.endDatePicker.set('minDate', dateStr);
@@ -75,7 +77,9 @@ class OverviewPage {
                 dateFormat: "Y-m-d",
                 defaultDate: new Date(),
                 maxDate: "today",
-                disableMobile: true,
+                disableMobile: "true",
+                position: "below",
+                static: true,
                 onChange: (selectedDates, dateStr) => {
                     if (selectedDates[0]) {
                         this.startDatePicker.set('maxDate', dateStr);
