@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYServSight</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- Chart.js 引入 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1"></script>
+    <!-- Chart.js Annotation 插件 -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@2.1.0"></script>
+    <!-- Flatpickr JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- Flatpickr 中文語言包 -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh-tw.js"></script>
+    <!-- 時間處理庫 -->
+    <script src="https://cdn.jsdelivr.net/npm/moment/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-moment/dist/chartjs-adapter-moment.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>SYServSight</h2>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-page="overview">Overview</li>
+                <li class="nav-item" data-page="product-comparison">商品資料統計</li>
+            </ul>
+        </div>
+        
+        <div class="main-content">
+            <!-- 總覽頁面 -->
+            <div class="page active" id="overview-page">
+                <div class="content">
+                    <div class="page-header">
+                        <h1 class="page-title">Overview</h1>
+                        <div class="date-selector">
+                            <input type="text" id="start-date" placeholder="開始日期">
+                            <span class="date-separator">至</span>
+                            <input type="text" id="end-date" placeholder="結束日期">
+                            <button id="date-confirm">確認</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <div class="stats-container">
+                            <div class="stat-card">
+                                <h3>平均營業額</h3>
+                                <div class="stat-value" id="avg-sales">$0</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>總營業額</h3>
+                                <div class="stat-value" id="total-sales">$0</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>營業額最高日</h3>
+                                <div class="stat-value" id="highest-sales-amount">$0</div>
+                                <div class="stat-subvalue" id="highest-sales-date">-</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>營業額最低日</h3>
+                                <div class="stat-value" id="lowest-sales-amount">$0</div>
+                                <div class="stat-subvalue" id="lowest-sales-date">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="charts-container">
+                            <div class="chart-card">
+                                <h3>營業額走勢</h3>
+                                <div class="chart-content">
+                                    <canvas id="sales-trend-chart"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div class="charts-row">
+                                <div class="chart-card">
+                                    <h3>銷售額排行</h3>
+                                    <div class="chart-content">
+                                        <canvas id="top-products-chart"></canvas>
+                                    </div>
+                                </div>
+                                
+                                <div class="chart-card">
+                                    <h3>分類銷售額佔比</h3>
+                                    <div class="chart-content">
+                                        <canvas id="category-pie-chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="chart-card">
+                                <h3>週間平均營業額</h3>
+                                <div class="chart-content">
+                                    <canvas id="weekday-avg-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 商品營業額比對頁面 -->
+            <div class="page" id="product-comparison-page">
+                <div class="content">
+                    <div class="page-header">
+                        <h1 class="page-title">商品資料統計</h1>
+                        <div class="date-selector">
+                            <input type="text" id="product-start-date" placeholder="開始日期">
+                            <span class="date-separator">至</span>
+                            <input type="text" id="product-end-date" placeholder="結束日期">
+                            <button id="product-date-confirm">確認</button>
+                        </div>
+                    </div>
+                    
+                    <div class="charts-container">
+                        <div class="charts-row">
+                            <div class="chart-card product-trend">
+                                <h3>商品銷售走勢</h3>
+                                <div class="chart-content">
+                                    <canvas id="product-trend-chart"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="chart-card product-summary">
+                                <h3>商品銷售明細</h3>
+                                <div class="chart-content">
+                                    <div id="product-sales-summary"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 商品選擇彈窗 -->
+                <div class="product-selector-modal">
+                    <div class="product-selector-content">
+                        <div class="product-selector-header">
+                            <div class="product-selector-title">選擇商品比對</div>
+                            <button class="close-modal-button">&times;</button>
+                        </div>
+                        <div id="product-selection-container">
+                            <!-- 商品選擇器將通過JS產生 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/utils.js"></script>
+    <script src="js/dataLoader.js"></script>
+    <script src="js/overview.js"></script>
+    <script src="js/productComparison.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html> 
