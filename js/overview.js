@@ -329,7 +329,9 @@ class OverviewPage {
                         display: true,
                         position: 'top',
                         labels: {
-                            color: '#a0a0a0'
+                            color: '#a0a0a0',
+                            boxWidth: isMobile ? 12 : 40, // 移動端上圖例方塊更小
+                            padding: isMobile ? 8 : 10 // 移動端上圖例間距更小
                         }
                     }
                 },
@@ -346,10 +348,20 @@ class OverviewPage {
                                     return `${month}/${day}`;
                                 }
                                 return this.getLabelForValue(value);
-                            }
+                            },
+                            maxRotation: 0, // 避免標籤旋轉
+                            autoSkip: true, // 自動跳過標籤
+                            autoSkipPadding: isMobile ? 10 : 20 // 移動端標籤間距
                         },
                         grid: {
                             color: 'rgba(160, 160, 160, 0.1)'
+                        },
+                        // 減少x軸兩端的內邊距
+                        afterFit: function(axis) {
+                            if (isMobile) {
+                                axis.paddingLeft = 10;
+                                axis.paddingRight = 0;
+                            }
                         }
                     },
                     y: {
@@ -369,6 +381,14 @@ class OverviewPage {
                             color: 'rgba(160, 160, 160, 0.1)'
                         },
                         beginAtZero: true
+                    }
+                },
+                layout: {
+                    padding: {
+                        left: 5,
+                        right: 0, // 減少右側間距
+                        top: 10,
+                        bottom: 0  // 將底部間距調整為0
                     }
                 }
             };
@@ -438,18 +458,7 @@ class OverviewPage {
                         pointRadius: 0
                     });
                 }
-                
-                // 添加水平線
-                this.salesTrendChart.data.datasets.push({
-                    label: '$20000',
-                    data: twentyThousandLine,
-                    borderColor: 'rgba(255, 0, 0, 0.5)',
-                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
-                    fill: false,
-                    borderWidth: 1.5,
-                    tension: 0.4,
-                    pointRadius: 0
-                });
+
                 
                 // 更新圖表選項
                 this.salesTrendChart.options.scales.x.ticks.callback = function(value, index, values) {
@@ -505,7 +514,9 @@ class OverviewPage {
                                 display: true,
                                 position: 'top',
                                 labels: {
-                                    color: '#a0a0a0'
+                                    color: '#a0a0a0',
+                                    boxWidth: isMobile ? 12 : 40, // 移動端上圖例方塊更小
+                                    padding: isMobile ? 8 : 10 // 移動端上圖例間距更小
                                 }
                             }
                         },
@@ -522,10 +533,20 @@ class OverviewPage {
                                             return `${month}/${day}`;
                                         }
                                         return this.getLabelForValue(value);
-                                    }
+                                    },
+                                    maxRotation: 0, // 避免標籤旋轉
+                                    autoSkip: true, // 自動跳過標籤
+                                    autoSkipPadding: isMobile ? 10 : 20 // 移動端標籤間距
                                 },
                                 grid: {
                                     color: 'rgba(160, 160, 160, 0.1)'
+                                },
+                                // 減少x軸兩端的內邊距
+                                afterFit: function(axis) {
+                                    if (isMobile) {
+                                        axis.paddingLeft = 10;
+                                        axis.paddingRight = 0;
+                                    }
                                 }
                             },
                             y: {
@@ -545,6 +566,14 @@ class OverviewPage {
                                     color: 'rgba(160, 160, 160, 0.1)'
                                 },
                                 beginAtZero: true
+                            }
+                        },
+                        layout: {
+                            padding: {
+                                left: 5,
+                                right: 0, // 減少右側間距
+                                top: 10,
+                                bottom: 0  // 將底部間距調整為0
                             }
                         }
                     }

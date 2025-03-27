@@ -688,7 +688,8 @@ class ProductComparisonPage {
                     data: data,
                     borderColor: color,
                     backgroundColor: color,
-                fill: false,
+                    fill: false,
+                    borderWidth: 1.5,
                     tension: 0.4,
                     yAxisID: isStudentNoodle ? 'quantity' : 'sales'
                 };
