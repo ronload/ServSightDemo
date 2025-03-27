@@ -1,4 +1,5 @@
 /**
+/**
  * 总览页面
  * 显示销售趋势、销售额排行和分类占比
  */
@@ -238,7 +239,7 @@ class OverviewPage {
     }
     
     // 更新销售趋势折线图
-    updateSalesTrendChart(data) {
+    async updateSalesTrendChart(data) {
         try {
             console.log('Updating sales trend chart...');
             
@@ -249,7 +250,10 @@ class OverviewPage {
                 return;
             }
             
-            // 按日期分组数据
+            // 檢測是否為移動設備
+            const isMobile = window.innerWidth <= 768;
+            
+            // 按日期分組數據
             const salesByDate = {};
             
             // 首先查找每个日期的"總計"行
@@ -313,55 +317,182 @@ class OverviewPage {
             const totalSales = amounts.reduce((sum, amount) => sum + amount, 0);
             this.totalSalesElement.textContent = `$${formatAmount(totalSales)}`;
             
-            // 创建或更新图表
-            const ctx = chartContainer.getContext('2d');
+            // 創建圖表的選項配置
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: false
+                    },
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        labels: {
+                            color: '#a0a0a0'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#a0a0a0',
+                            callback: function(value, index, values) {
+                                if (isMobile) {
+                                    // 移動端簡化為 MM/DD 格式
+                                    const date = new Date(this.getLabelForValue(value));
+                                    const month = date.getMonth() + 1;
+                                    const day = date.getDate();
+                                    return `${month}/${day}`;
+                                }
+                                return this.getLabelForValue(value);
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(160, 160, 160, 0.1)'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#a0a0a0',
+                            callback: function(value, index, values) {
+                                if (isMobile) {
+                                    // 移動端使用 k 表示千元
+                                    if (value >= 1000) {
+                                        return '$' + (value / 1000) + 'k';
+                                    }
+                                }
+                                return '$' + value;
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(160, 160, 160, 0.1)'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            };
             
-            if (this.salesTrendChart) {
-                this.salesTrendChart.data.labels = dates;
-                this.salesTrendChart.data.datasets = [{
-                    label: '日營業額',
-                    data: amounts,
-                    borderColor: '#2997ff',
-                    backgroundColor: '#2997ff',
-                    fill: false,
-                    tension: 0.4,
-                    borderWidth: 2
-                }, {
+            // 準備圖表數據
+            const chartData = {
+                labels: dates,
+                datasets: [
+                    {
+                        label: '日營業額',
+                        data: amounts,
+                        borderColor: '#2997ff',
+                        backgroundColor: 'rgba(41, 151, 255, 0.1)',
+                        fill: false,
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: isMobile ? 2 : 3,
+                        pointHoverRadius: isMobile ? 4 : 5
+                    }
+                ]
+            };
+            
+            // 只在非移動設備上添加三日平均線
+            if (!isMobile) {
+                chartData.datasets.push({
                     label: '三日平均',
                     data: movingAverages,
-                    borderColor: 'rgba(41, 151, 255, 0.5)',
-                    backgroundColor: 'rgba(41, 151, 255, 0.5)',
+                    borderColor: 'rgba(116, 201, 255, 0.7)',
+                    backgroundColor: 'rgba(116, 201, 255, 0.1)',
                     fill: false,
                     borderWidth: 1.5,
                     tension: 0.4,
                     pointRadius: 0
-                }];
+                });
+            }
+            
+            // 創建或更新圖表
+            const ctx = chartContainer.getContext('2d');
+            
+            if (this.salesTrendChart) {
+                // 更新现有图表
+                this.salesTrendChart.data.labels = dates;
+                this.salesTrendChart.data.datasets = [
+                    {
+                        label: '日營業額',
+                        data: amounts,
+                        borderColor: '#2997ff',
+                        backgroundColor: 'rgba(41, 151, 255, 0.1)',
+                        fill: false,
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: isMobile ? 2 : 3,
+                        pointHoverRadius: isMobile ? 4 : 5
+                    }
+                ];
+                
+                // 只在非移動設備上添加三日平均線
+                if (!isMobile) {
+                    this.salesTrendChart.data.datasets.push({
+                        label: '三日平均',
+                        data: movingAverages,
+                        borderColor: 'rgba(116, 201, 255, 0.7)',
+                        backgroundColor: 'rgba(116, 201, 255, 0.1)',
+                        fill: false,
+                        borderWidth: 1.5,
+                        tension: 0.4,
+                        pointRadius: 0
+                    });
+                }
+                
+                // 添加水平線
+                this.salesTrendChart.data.datasets.push({
+                    label: '$20000',
+                    data: twentyThousandLine,
+                    borderColor: 'rgba(255, 0, 0, 0.5)',
+                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
+                    fill: false,
+                    borderWidth: 1.5,
+                    tension: 0.4,
+                    pointRadius: 0
+                });
+                
+                // 更新圖表選項
+                this.salesTrendChart.options.scales.x.ticks.callback = function(value, index, values) {
+                    if (isMobile) {
+                        // 移動端簡化為 MM/DD 格式
+                        const date = new Date(this.getLabelForValue(value));
+                        const month = date.getMonth() + 1;
+                        const day = date.getDate();
+                        return `${month}/${day}`;
+                    }
+                    return this.getLabelForValue(value);
+                };
+                
+                this.salesTrendChart.options.scales.y.ticks.callback = function(value, index, values) {
+                    if (isMobile) {
+                        // 移動端使用 k 表示千元
+                        if (value >= 1000) {
+                            return '$' + (value / 1000) + 'k';
+                        }
+                    }
+                    return '$' + value;
+                };
+                
                 this.salesTrendChart.update();
-                console.log('Sales trend chart updated');
             } else {
-                console.log('Creating new sales trend chart');
+                // 创建新图表
                 this.salesTrendChart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: dates,
-                        datasets: [{
-                            label: '日營業額',
-                            data: amounts,
-                            borderColor: '#2997ff',
-                            backgroundColor: '#2997ff',
-                            fill: false,
-                            tension: 0.4,
-                            borderWidth: 2
-                        }, {
-                            label: '三日平均',
-                            data: movingAverages,
-                            borderColor: 'rgba(41, 151, 255, 0.5)',
-                            backgroundColor: 'rgba(41, 151, 255, 0.5)',
-                            fill: false,
-                            borderWidth: 1.5,
-                            tension: 0.4,
-                            pointRadius: 0
-                        }]
+                        datasets: [
+                            {
+                                label: '日營業額',
+                                data: amounts,
+                                borderColor: '#2997ff',
+                                backgroundColor: 'rgba(41, 151, 255, 0.1)',
+                                fill: false,
+                                borderWidth: 1,
+                                tension: 0.4,
+                                pointRadius: isMobile ? 2 : 3,
+                                pointHoverRadius: isMobile ? 4 : 5
+                            }
+                        ]
                     },
                     options: {
                         responsive: true,
@@ -378,47 +509,78 @@ class OverviewPage {
                                 }
                             }
                         },
-                        interaction: {
-                            mode: 'index',
-                            intersect: false
-                        },
                         scales: {
                             x: {
-                                type: 'time',
-                                time: {
-                                    parser: 'YYYY/MM/DD',
-                                    tooltipFormat: 'YYYY/MM/DD',
-                                    unit: 'day'
+                                ticks: {
+                                    color: '#a0a0a0',
+                                    callback: function(value, index, values) {
+                                        if (isMobile) {
+                                            // 移動端簡化為 MM/DD 格式
+                                            const date = new Date(this.getLabelForValue(value));
+                                            const month = date.getMonth() + 1;
+                                            const day = date.getDate();
+                                            return `${month}/${day}`;
+                                        }
+                                        return this.getLabelForValue(value);
+                                    }
                                 },
                                 grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)',
-                                    drawBorder: false
-                                },
-                                ticks: {
-                                    color: '#a0a0a0'
+                                    color: 'rgba(160, 160, 160, 0.1)'
                                 }
                             },
                             y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)',
-                                    drawBorder: false
-                                },
                                 ticks: {
                                     color: '#a0a0a0',
-                                    callback: function(value) {
-                                        return new Intl.NumberFormat('zh-TW', {
-                                            style: 'currency',
-                                            currency: 'TWD',
-                                            minimumFractionDigits: 0
-                                        }).format(value);
+                                    callback: function(value, index, values) {
+                                        if (isMobile) {
+                                            // 移動端使用 k 表示千元
+                                            if (value >= 1000) {
+                                                return '$' + (value / 1000) + 'k';
+                                            }
+                                        }
+                                        return '$' + value;
                                     }
-                                }
+                                },
+                                grid: {
+                                    color: 'rgba(160, 160, 160, 0.1)'
+                                },
+                                beginAtZero: true
                             }
                         }
                     }
                 });
+                
+                // 只在非移動設備上添加三日平均線
+                if (!isMobile) {
+                    this.salesTrendChart.data.datasets.push({
+                        label: '三日平均',
+                        data: movingAverages,
+                        borderColor: 'rgba(116, 201, 255, 0.7)',
+                        backgroundColor: 'rgba(116, 201, 255, 0.1)',
+                        fill: false,
+                        borderWidth: 1.5,
+                        tension: 0.4,
+                        pointRadius: 0
+                    });
+                }
+                
+                // 添加水平線
+                this.salesTrendChart.data.datasets.push({
+                    label: '$20000',
+                    data: twentyThousandLine,
+                    borderColor: 'rgba(255, 0, 0, 0.5)',
+                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
+                    fill: false,
+                    borderWidth: 1.5,
+                    tension: 0.4,
+                    pointRadius: 0
+                });
+                
+                this.salesTrendChart.update();
             }
+            
+            console.log('Sales trend chart updated successfully');
+            
         } catch (error) {
             console.error('Error updating sales trend chart:', error);
         }
@@ -961,6 +1123,153 @@ class OverviewPage {
             
         } catch (error) {
             console.error('Error updating weekday average sales chart:', error);
+        }
+    }
+
+    // 更新週間平均營業額圖表
+    updateWeekdayAverageChart(data) {
+        try {
+            console.log('Updating weekday average chart...');
+            const weekdays = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+            
+            if (!data || !data.dailyData || data.dailyData.length === 0) {
+                console.log('No data for weekday chart');
+                return;
+            }
+            
+            // 檢測是否為移動設備
+            const isMobile = window.innerWidth <= 768;
+            
+            // 將資料按星期幾分組
+            const salesByWeekday = {};
+            const countByWeekday = {};
+            
+            weekdays.forEach(day => {
+                salesByWeekday[day] = 0;
+                countByWeekday[day] = 0;
+            });
+            
+            data.dailyData.forEach(day => {
+                const date = new Date(day.date.replace(/(\d{4})\/(\d{2})\/(\d{2})/, '$1-$2-$3'));
+                const weekdayIndex = date.getDay();
+                const weekday = weekdays[weekdayIndex];
+                
+                salesByWeekday[weekday] += day.totalSales;
+                countByWeekday[weekday]++;
+            });
+            
+            // 計算每個星期幾的平均銷售額
+            const avgSalesByWeekday = {};
+            weekdays.forEach(day => {
+                if (countByWeekday[day] > 0) {
+                    avgSalesByWeekday[day] = salesByWeekday[day] / countByWeekday[day];
+                } else {
+                    avgSalesByWeekday[day] = 0;
+                }
+            });
+            
+            // 轉換成圖表資料
+            const chartData = {
+                labels: weekdays,
+                datasets: [{
+                    label: '平均營業額',
+                    data: weekdays.map(day => avgSalesByWeekday[day]),
+                    backgroundColor: function(context) {
+                        const index = context.dataIndex;
+                        const value = context.dataset.data[index];
+                        return value > 20000 ? 'rgba(255, 0, 0, 0.7)' : 'rgba(41, 151, 255, 0.7)';
+                    },
+                    borderColor: function(context) {
+                        const index = context.dataIndex;
+                        const value = context.dataset.data[index];
+                        return value > 20000 ? 'rgba(255, 0, 0, 1)' : 'rgba(41, 151, 255, 1)';
+                    },
+                    borderWidth: 1
+                }]
+            };
+            
+            // 更新或創建圖表
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: false
+                    },
+                    legend: {
+                        display: false
+                    },
+                    annotation: {
+                        annotations: {
+                            line1: {
+                                type: 'line',
+                                mode: 'horizontal',
+                                scaleID: 'y',
+                                value: 20000,
+                                borderColor: 'rgb(255, 0, 0)',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                label: {
+                                    display: true,
+                                    content: '$20,000',
+                                    position: 'end',
+                                    backgroundColor: 'rgba(255, 0, 0, 0.8)',
+                                    color: 'white',
+                                    font: {
+                                        weight: 'bold'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#a0a0a0',
+                            callback: function(value, index, values) {
+                                if (isMobile) {
+                                    // 移動端使用 k 表示千元
+                                    if (value >= 1000) {
+                                        return '$' + (value / 1000) + 'k';
+                                    }
+                                }
+                                return '$' + value;
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(160, 160, 160, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#a0a0a0'
+                        },
+                        grid: {
+                            color: 'rgba(160, 160, 160, 0.1)'
+                        }
+                    }
+                }
+            };
+            
+            if (this.weekdayAvgChart) {
+                this.weekdayAvgChart.data = chartData;
+                this.weekdayAvgChart.options = chartOptions;
+                this.weekdayAvgChart.update();
+            } else {
+                this.weekdayAvgChart = new Chart(
+                    document.getElementById('weekday-avg-chart').getContext('2d'), {
+                        type: 'bar',
+                        data: chartData,
+                        options: chartOptions
+                    }
+                );
+            }
+            
+            console.log('Weekday average chart updated successfully');
+        } catch (error) {
+            console.error('Error updating weekday average chart:', error);
         }
     }
 } 
