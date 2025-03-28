@@ -403,7 +403,7 @@ class OverviewPage {
                         borderColor: '#2997ff',
                         backgroundColor: 'rgba(41, 151, 255, 0.1)',
                         fill: false,
-                        borderWidth: 2,
+                        borderWidth: 1,   // 確保與初始創建時的粗細相同
                         tension: 0.4,
                         pointRadius: isMobile ? 2 : 3,
                         pointHoverRadius: isMobile ? 4 : 5
@@ -438,7 +438,7 @@ class OverviewPage {
                         borderColor: '#2997ff',
                         backgroundColor: 'rgba(41, 151, 255, 0.1)',
                         fill: false,
-                        borderWidth: 2,
+                        borderWidth: 1,   // 確保與初始創建時的粗細相同
                         tension: 0.4,
                         pointRadius: isMobile ? 2 : 3,
                         pointHoverRadius: isMobile ? 4 : 5
@@ -459,6 +459,17 @@ class OverviewPage {
                     });
                 }
 
+                // 添加$20000水平線
+                this.salesTrendChart.data.datasets.push({
+                    label: '$20000',
+                    data: twentyThousandLine,
+                    borderColor: 'rgba(255, 0, 0, 0.5)',
+                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
+                    fill: false,
+                    borderWidth: 1.5,
+                    tension: 0.4,
+                    pointRadius: 0
+                });
                 
                 // 更新圖表選項
                 this.salesTrendChart.options.scales.x.ticks.callback = function(value, index, values) {
@@ -496,7 +507,7 @@ class OverviewPage {
                                 borderColor: '#2997ff',
                                 backgroundColor: 'rgba(41, 151, 255, 0.1)',
                                 fill: false,
-                                borderWidth: 1,
+                                borderWidth: 1,   // 確保與初始創建時的粗細相同
                                 tension: 0.4,
                                 pointRadius: isMobile ? 2 : 3,
                                 pointHoverRadius: isMobile ? 4 : 5
@@ -1103,28 +1114,6 @@ class OverviewPage {
                                         return `平均營業額: $${formatAmount(context.raw)}`;
                                     }
                                 }
-                            },
-                            annotation: {
-                                annotations: {
-                                    twentyThousandLine: {
-                                        type: 'line',
-                                        yMin: 20000,
-                                        yMax: 20000,
-                                        borderColor: 'rgb(255, 0, 0)',
-                                        borderWidth: 2,
-                                        borderDash: [5, 5],
-                                        label: {
-                                            display: true,
-                                            content: '$20,000',
-                                            position: 'end',
-                                            backgroundColor: 'rgba(255, 0, 0, 0.8)',
-                                            color: 'white',
-                                            font: {
-                                                weight: 'bold'
-                                            }
-                                        }
-                                    }
-                                }
                             }
                         },
                         scales: {
@@ -1142,6 +1131,16 @@ class OverviewPage {
                                     const maxValue = Math.max(...allData);
                                     return maxValue * 1.2;
                                 },
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#a0a0a0',
+                                    maxRotation: 0,  // 避免標籤旋轉
+                                    autoSkip: false  // 強制顯示所有標籤
+                                },
+                                grid: {
+                                    color: 'rgba(160, 160, 160, 0.1)'
+                                }
                             }
                         }
                     }
@@ -1227,29 +1226,6 @@ class OverviewPage {
                     },
                     legend: {
                         display: false
-                    },
-                    annotation: {
-                        annotations: {
-                            line1: {
-                                type: 'line',
-                                mode: 'horizontal',
-                                scaleID: 'y',
-                                value: 20000,
-                                borderColor: 'rgb(255, 0, 0)',
-                                borderWidth: 2,
-                                borderDash: [5, 5],
-                                label: {
-                                    display: true,
-                                    content: '$20,000',
-                                    position: 'end',
-                                    backgroundColor: 'rgba(255, 0, 0, 0.8)',
-                                    color: 'white',
-                                    font: {
-                                        weight: 'bold'
-                                    }
-                                }
-                            }
-                        }
                     }
                 },
                 scales: {
@@ -1273,7 +1249,8 @@ class OverviewPage {
                     },
                     x: {
                         ticks: {
-                            color: '#a0a0a0'
+                            color: '#a0a0a0',
+                            maxRotation: 0  // 避免標籤旋轉
                         },
                         grid: {
                             color: 'rgba(160, 160, 160, 0.1)'
