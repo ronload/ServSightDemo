@@ -101,14 +101,14 @@ h4 {
     width: 100%;
 }
 
-/* 全局卡片容器間距 */
+/* 全局卡片容器间距 */
 .date-picker,
 .stats-container,
 .charts-container {
     margin: 0 20px 20px 20px;
 }
 
-/* 移除舊的日期選擇器和控制列樣式 */
+/* 移除舊的日期选择器和控制列样式 */
 .controls-row,
 .date-picker,
 .date-picker-label,
@@ -118,7 +118,7 @@ h4 {
     display: none;
 }
 
-/* 統計卡片樣式 */
+/* 统计卡片样式 */
 .stats-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -169,7 +169,7 @@ h4 {
     order: 3;
 }
 
-/* 營業額相關數字的統一樣式 */
+/* 营业额相关数字的统一样式 */
 .stat-card.sales-amount .stat-value {
     color: #2997ff;
     font-size: 28px;
@@ -182,7 +182,7 @@ h4 {
     font-weight: 600;
 }
 
-/* 圖表容器樣式 */
+/* 图表容器样式 */
 .charts-container {
     margin: 0 20px;
 }
@@ -209,7 +209,7 @@ h4 {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
-/* 營業額走勢圖表高度 */
+/* 营业额走势图表高度 */
 #sales-trend-chart {
     height: 600px !important;
 }
@@ -233,7 +233,7 @@ h4 {
     height: 100%;
 }
 
-/* 商品比較頁面樣式 */
+/* 商品比较页面样式 */
 .controls-row {
     display: flex;
     gap: 20px;
@@ -1019,6 +1019,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     color: var(--text-primary);
 }
 
+/* PC端日期選擇器 - 恢復原始佈局 */
 .date-selector {
     position: relative;
     top: 0;
@@ -1040,6 +1041,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     color: var(--text-primary);
     font-size: 14px;
     text-align: center;
+    box-sizing: border-box;
 }
 
 .date-selector .date-separator {
@@ -1061,61 +1063,15 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-width: 60px; /* 確保按鈕有足夠的寬度 */
+    min-width: 60px;
 }
 
 .date-selector button:hover {
     background-color: #cccccc;
 }
 
-/* 確保卡片容器與日期選擇器對齊 */
-.chart-container {
-    padding: 0;
-}
-
-/* 移除舊的日期選擇器樣式 */
-.overview-header {
-    display: none;
-}
-
-/* 日期輸入區域樣式 - 應用於所有設備 */
-.date-selector .date-inputs {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-}
-
-.date-selector .date-inputs input[type="text"] {
-    width: 45%;
-    text-align: center;
-}
-
-.date-selector .date-inputs .date-separator {
-    margin: 0 15px;
-}
-
 /* 移動端適配 - 僅影響移動設備 */
 @media (max-width: 768px) {
-    /* 整體頁面結構優化 */
-    .container {
-        padding-top: 0;
-    }
-    
-    .main-content {
-        padding: 15px 0;
-        overflow-x: hidden;
-    }
-    
-    /* 側邊欄在移動端的優化 */
-    .sidebar {
-        padding: 10px 0;
-    }
-    
-    .nav-item {
-        padding: 12px 15px;
-    }
-    
     /* 頁面標題和日期選擇器容器 */
     .page-header {
         flex-direction: column;
@@ -1129,117 +1085,51 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         display: none;
     }
     
-    /* 日期選擇器優化 */
+    /* 移動端日期選擇器的特定樣式 */
     .date-selector {
         width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        margin-top: 0; /* 移除上方的間距 */
-        margin-bottom: 15px; /* 增加底部間距 */
+        display: block;
     }
     
-    /* 日期輸入區域 - 徹底修復 iOS Safari 問題 */
-    .date-inputs-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    /* 移動端使用表格佈局 */
+    .date-selector table {
         width: 100%;
-        margin: 0 auto;
-        position: relative; /* 新增相對定位 */
+        border-collapse: collapse;
+        border-spacing: 0;
+        margin-bottom: 10px;
     }
     
+    .date-selector td {
+        padding: 0;
+        vertical-align: middle;
+    }
+    
+    /* 移動端輸入框樣式 */
     .date-selector input[type="text"] {
-        width: 45%;
-        height: 44px !important; /* 強制高度 */
-        padding: 0 10px;
-        font-size: 16px; /* iOS Safari 的最佳大小 */
+        width: 100%;
+        height: 44px;
+        padding: 0 5px;
+        font-size: 16px;
         text-align: center;
         border-radius: 8px;
         border: 1px solid #333;
-        -webkit-appearance: none !important; /* 強制覆蓋 */
-        appearance: none !important;
-        background-color: #0a0a0a !important; /* 確保背景色一致 */
-        line-height: 44px !important; /* 確保文字垂直居中 */
-        display: inline-block;
-        vertical-align: middle;
-        margin: 0;
-        /* 確保輸入框可見 */
-        position: relative;
-        z-index: 1;
-        box-sizing: border-box;
+        background-color: var(--background-primary);
+        color: var(--text-primary);
+        -webkit-appearance: none;
+        appearance: none;
     }
     
-    .date-separator {
-        font-size: 18px;
-        line-height: 44px;
-        height: 44px;
-        display: inline-block;
-        vertical-align: middle;
-        margin: 0 10px;
-        text-align: center;
-        color: var(--text-secondary); /* 確保顏色一致 */
-        z-index: 1; /* 確保可見 */
-        position: relative; /* 確保定位正確 */
-    }
-    
-    /* 確保桌面版和移動版日期選擇器的容器樣式一致 */
-    .date-selector .date-inputs {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-    }
-    
-    /* 確保兩個輸入框和間隔符號的正確佈局 */
-    .date-selector .date-inputs input[type="text"]:first-child {
-        flex: 1;
-        margin-right: 5px;
-    }
-    
-    .date-selector .date-inputs input[type="text"]:last-child {
-        flex: 1;
-        margin-left: 5px;
-    }
-    
-    .date-selector .date-inputs .date-separator {
-        margin: 0 10px;
-        flex: 0 0 auto;
-    }
-    
-    /* 修改按鈕樣式確保與Safari兼容 */
+    /* 移動端按鈕樣式 */
     .date-selector button {
         width: 100%;
-        height: 44px !important; /* 強制高度 */
-        line-height: 44px !important;
+        height: 44px;
         padding: 0;
         font-size: 18px;
         border-radius: 8px;
-        margin-top: 10px;
-        -webkit-appearance: none !important; /* 強制覆蓋 */
-        appearance: none !important;
-        background-color: #ededed !important;
-        color: #000 !important;
-        border: none !important;
-        font-weight: 500;
-        box-shadow: none;
-        cursor: pointer;
-        text-align: center;
-    }
-    
-    /* 確保 flatpickr 的輸入框也被同樣樣式覆蓋 */
-    .flatpickr-input {
-        -webkit-appearance: none !important;
-        appearance: none !important;
-        height: 44px !important;
-        line-height: 44px !important;
-        border-radius: 8px !important;
-        font-size: 16px !important;
-    }
-    
-    /* 移除可能影響的其他元素 */
-    .date-selector .date-inputs .date-separator {
-        margin: 0 10px;
+        display: block;
+        margin-top: 5px;
+        -webkit-appearance: none;
+        appearance: none;
     }
     
     /* 統計卡片排版優化 - 使用網格佈局 */

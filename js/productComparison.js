@@ -129,12 +129,12 @@ class ProductComparisonPage {
         }
     }
     
-    // 初始化或重新初始化日期選擇器
+    // 初始化日期选择器
     initializeDatePickers() {
         try {
-            console.log('Initializing product page date pickers...');
+            console.log('Initializing product comparison date pickers...');
             
-            // 如果已有實例，先銷毀它們
+            // 如果已經有實例，先銷毀它們
             if (this.startDatePicker) {
                 this.startDatePicker.destroy();
             }
@@ -142,45 +142,108 @@ class ProductComparisonPage {
                 this.endDatePicker.destroy();
             }
             
-            // 重新初始化日期選擇器
-            this.startDatePicker = flatpickr("#product-start-date", {
+            // 判斷是否為移動端
+            const isMobile = window.matchMedia("(max-width: 768px)").matches;
+            console.log('Initializing date pickers for:', isMobile ? 'mobile' : 'desktop');
+            
+            // 共通配置
+            const commonConfig = {
                 locale: 'zh_tw',
                 dateFormat: "Y-m-d",
-                defaultDate: this.startDateInput.value,
-                maxDate: this.endDateInput.value || "today",
-                disableMobile: false,
-                position: "auto",
+                maxDate: "today",
+                disableMobile: true, // 禁用原生移動端日期選擇器
                 allowInput: true,
                 clickOpens: true,
-                mode: "single",
+                mode: "single"
+            };
+            
+            // 重新初始化日期選擇器
+            this.startDatePicker = flatpickr("#product-start-date", {
+                ...commonConfig,
+                defaultDate: this.startDateInput.value || "2025-02-01",
+                position: "auto",
                 onChange: (selectedDates, dateStr) => {
                     if (selectedDates[0]) {
                         this.endDatePicker.set('minDate', dateStr);
                     }
+                    
+                    // 防止樣式被覆蓋
+                    if (isMobile) {
+                        setTimeout(() => this.applyMobileStyles(), 0);
+                    }
+                },
+                onOpen: () => {
+                    if (isMobile) setTimeout(() => this.applyMobileStyles(), 0);
+                },
+                onClose: () => {
+                    if (isMobile) setTimeout(() => this.applyMobileStyles(), 0);
                 }
             });
-
+            
             this.endDatePicker = flatpickr("#product-end-date", {
-                locale: 'zh_tw',
-                dateFormat: "Y-m-d",
-                defaultDate: this.endDateInput.value,
-                minDate: this.startDateInput.value,
-                maxDate: "today",
-                disableMobile: false,
+                ...commonConfig,
+                defaultDate: this.endDateInput.value || new Date(),
                 position: "auto",
-                allowInput: true,
-                clickOpens: true,
-                mode: "single",
                 onChange: (selectedDates, dateStr) => {
                     if (selectedDates[0]) {
                         this.startDatePicker.set('maxDate', dateStr);
                     }
+                    
+                    // 防止樣式被覆蓋
+                    if (isMobile) {
+                        setTimeout(() => this.applyMobileStyles(), 0);
+                    }
+                },
+                onOpen: () => {
+                    if (isMobile) setTimeout(() => this.applyMobileStyles(), 0);
+                },
+                onClose: () => {
+                    if (isMobile) setTimeout(() => this.applyMobileStyles(), 0);
                 }
             });
             
-            console.log('Product page date pickers initialized successfully');
+            // 移動端立即應用自定義樣式
+            if (isMobile) {
+                setTimeout(() => this.applyMobileStyles(), 0);
+            }
+            
+            console.log('Product comparison date pickers initialized successfully');
         } catch (error) {
-            console.error('Error initializing product page date pickers:', error);
+            console.error('Error initializing product comparison date pickers:', error);
+        }
+    }
+    
+    // 應用移動端樣式
+    applyMobileStyles() {
+        const isMobile = window.matchMedia("(max-width: 768px)").matches;
+        if (!isMobile) return;
+        
+        console.log('Applying mobile styles to product date inputs');
+        
+        // 獲取輸入框
+        const startInput = document.getElementById('product-start-date');
+        const endInput = document.getElementById('product-end-date');
+        
+        if (startInput && endInput) {
+            // 應用大尺寸樣式
+            const inputStyle = 'width:43%; height:70px; font-size:18px; text-align:center; border-radius:16px; ' +
+                'border:1px solid #444; background:#0a0a0a; color:#fff; padding:0; margin:0; ' +
+                '-webkit-appearance:none; box-sizing:border-box;';
+                
+            startInput.setAttribute('style', inputStyle);
+            endInput.setAttribute('style', inputStyle);
+            
+            // 確認按鈕樣式
+            const confirmBtn = document.getElementById('product-date-confirm');
+            if (confirmBtn) {
+                const btnStyle = 'display:block; width:100%; height:70px; line-height:70px; font-size:20px; ' +
+                    'font-weight:500; background-color:#ededed; color:#000; border:none; border-radius:16px; ' +
+                    '-webkit-appearance:none; margin:0 auto;';
+                    
+                confirmBtn.setAttribute('style', btnStyle);
+            }
+            
+            console.log('Mobile styles applied directly to product elements');
         }
     }
     
