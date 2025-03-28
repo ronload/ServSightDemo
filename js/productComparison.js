@@ -107,15 +107,51 @@ class ProductComparisonPage {
             console.log('Initializing ProductComparisonPage...');
             
             // 初始化日期選擇器
+            this.initializeDatePickers();
+            
+            // 綁定確認按鈕事件
+            this.dateConfirmBtn.addEventListener('click', () => {
+                console.log('Date confirm button clicked');
+                this.loadData();
+            });
+        
+            // 加载商品列表
+            await this.loadProductList();
+            
+            // 初始加载数据
+            this.loadData();
+                
+            console.log('ProductComparisonPage initialized successfully');
+                
+        } catch (error) {
+            console.error('Error in ProductComparisonPage init:', error);
+            alert('頁面初始化失敗，請查看控制台以獲取詳細信息');
+        }
+    }
+    
+    // 初始化或重新初始化日期選擇器
+    initializeDatePickers() {
+        try {
+            console.log('Initializing product page date pickers...');
+            
+            // 如果已有實例，先銷毀它們
+            if (this.startDatePicker) {
+                this.startDatePicker.destroy();
+            }
+            if (this.endDatePicker) {
+                this.endDatePicker.destroy();
+            }
+            
+            // 重新初始化日期選擇器
             this.startDatePicker = flatpickr("#product-start-date", {
                 locale: 'zh_tw',
                 dateFormat: "Y-m-d",
                 defaultDate: this.startDateInput.value,
-                maxDate: this.endDateInput.value,
+                maxDate: this.endDateInput.value || "today",
                 disableMobile: false,
                 position: "auto",
-                static: true,
-                inline: false,
+                allowInput: true,
+                clickOpens: true,
                 mode: "single",
                 onChange: (selectedDates, dateStr) => {
                     if (selectedDates[0]) {
@@ -132,8 +168,8 @@ class ProductComparisonPage {
                 maxDate: "today",
                 disableMobile: false,
                 position: "auto",
-                static: true,
-                inline: false,
+                allowInput: true,
+                clickOpens: true,
                 mode: "single",
                 onChange: (selectedDates, dateStr) => {
                     if (selectedDates[0]) {
@@ -142,23 +178,9 @@ class ProductComparisonPage {
                 }
             });
             
-            // 綁定確認按鈕事件
-            this.dateConfirmBtn.addEventListener('click', () => {
-                console.log('Date confirm button clicked');
-                this.loadData();
-            });
-        
-        // 加载商品列表
-        await this.loadProductList();
-        
-        // 初始加载数据
-        this.loadData();
-            
-            console.log('ProductComparisonPage initialized successfully');
-            
+            console.log('Product page date pickers initialized successfully');
         } catch (error) {
-            console.error('Error in ProductComparisonPage init:', error);
-            alert('頁面初始化失敗，請查看控制台以獲取詳細信息');
+            console.error('Error initializing product page date pickers:', error);
         }
     }
     
@@ -301,8 +323,8 @@ class ProductComparisonPage {
         selectAllButton.textContent = '全選';
         selectAllButton.className = 'selection-button';
         selectAllButton.style.padding = '5px 10px';
-        selectAllButton.style.backgroundColor = '#3498db';
-        selectAllButton.style.color = 'white';
+        selectAllButton.style.backgroundColor = '#ededed';
+        selectAllButton.style.color = '#000000';
         selectAllButton.style.border = 'none';
         selectAllButton.style.borderRadius = '4px';
         selectAllButton.style.cursor = 'pointer';
@@ -311,8 +333,8 @@ class ProductComparisonPage {
         deselectAllButton.textContent = '取消全選';
         deselectAllButton.className = 'selection-button';
         deselectAllButton.style.padding = '5px 10px';
-        deselectAllButton.style.backgroundColor = '#e74c3c';
-        deselectAllButton.style.color = 'white';
+        deselectAllButton.style.backgroundColor = '#ededed';
+        deselectAllButton.style.color = '#000000';
         deselectAllButton.style.border = 'none';
         deselectAllButton.style.borderRadius = '4px';
         deselectAllButton.style.cursor = 'pointer';

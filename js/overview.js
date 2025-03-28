@@ -58,31 +58,7 @@ class OverviewPage {
             console.log('All required elements found');
             
             // 初始化日期選擇器
-            this.startDatePicker = flatpickr("#start-date", {
-                locale: 'zh_tw',
-                dateFormat: "Y-m-d",
-                defaultDate: "2025-02-01",
-                maxDate: "today",
-                disableMobile: true,
-                onChange: (selectedDates, dateStr) => {
-                    if (selectedDates[0]) {
-                        this.endDatePicker.set('minDate', dateStr);
-                    }
-                }
-            });
-
-            this.endDatePicker = flatpickr("#end-date", {
-                locale: 'zh_tw',
-                dateFormat: "Y-m-d",
-                defaultDate: new Date(),
-                maxDate: "today",
-                disableMobile: true,
-                onChange: (selectedDates, dateStr) => {
-                    if (selectedDates[0]) {
-                        this.startDatePicker.set('maxDate', dateStr);
-                    }
-                }
-            });
+            this.initializeDatePickers();
             
             // 初始化頁面
             this.init();
@@ -398,7 +374,7 @@ class OverviewPage {
                 labels: dates,
                 datasets: [
                     {
-                        label: '營業額',
+                        label: '日營業額',
                         data: amounts,
                         borderColor: '#2997ff',
                         backgroundColor: 'rgba(41, 151, 255, 0.1)',
@@ -463,8 +439,8 @@ class OverviewPage {
                 this.salesTrendChart.data.datasets.push({
                     label: '$20000',
                     data: twentyThousandLine,
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                    borderColor: 'rgba(255, 0, 0, 0.5)',
+                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
                     fill: false,
                     borderWidth: 1.5,
                     tension: 0.4,
@@ -502,7 +478,7 @@ class OverviewPage {
                         labels: dates,
                         datasets: [
                             {
-                                label: '營業額',
+                                label: '日營業額',
                                 data: amounts,
                                 borderColor: '#2997ff',
                                 backgroundColor: 'rgba(41, 151, 255, 0.1)',
@@ -608,8 +584,8 @@ class OverviewPage {
                 this.salesTrendChart.data.datasets.push({
                     label: '$20000',
                     data: twentyThousandLine,
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                    borderColor: 'rgba(255, 0, 0, 0.5)',
+                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
                     fill: false,
                     borderWidth: 1.5,
                     tension: 0.4,
@@ -1276,6 +1252,60 @@ class OverviewPage {
             console.log('Weekday average chart updated successfully');
         } catch (error) {
             console.error('Error updating weekday average chart:', error);
+        }
+    }
+
+    // 初始化或重新初始化日期選擇器
+    initializeDatePickers() {
+        try {
+            console.log('Initializing date pickers...');
+            
+            // 如果已有實例，先銷毀它們
+            if (this.startDatePicker) {
+                this.startDatePicker.destroy();
+            }
+            if (this.endDatePicker) {
+                this.endDatePicker.destroy();
+            }
+            
+            // 重新初始化日期選擇器
+            this.startDatePicker = flatpickr("#start-date", {
+                locale: 'zh_tw',
+                dateFormat: "Y-m-d",
+                defaultDate: this.startDateInput.value || "2025-02-01",
+                maxDate: "today",
+                disableMobile: false,
+                position: "auto",
+                allowInput: true,
+                clickOpens: true,
+                mode: "single",
+                onChange: (selectedDates, dateStr) => {
+                    if (selectedDates[0]) {
+                        this.endDatePicker.set('minDate', dateStr);
+                    }
+                }
+            });
+
+            this.endDatePicker = flatpickr("#end-date", {
+                locale: 'zh_tw',
+                dateFormat: "Y-m-d",
+                defaultDate: this.endDateInput.value || new Date(),
+                maxDate: "today",
+                disableMobile: false,
+                position: "auto",
+                allowInput: true,
+                clickOpens: true,
+                mode: "single",
+                onChange: (selectedDates, dateStr) => {
+                    if (selectedDates[0]) {
+                        this.startDatePicker.set('maxDate', dateStr);
+                    }
+                }
+            });
+            
+            console.log('Date pickers initialized successfully');
+        } catch (error) {
+            console.error('Error initializing date pickers:', error);
         }
     }
 } 

@@ -114,6 +114,21 @@ class App {
         this.pageElements.forEach(page => {
             if (page.id === `${pageId}-page`) {
                 page.classList.add('active');
+                
+                // 調整頁面內的日期選擇器
+                setTimeout(() => {
+                    const dateSelector = page.querySelector('.date-selector');
+                    if (dateSelector) {
+                        // 確保日期選擇器高度一致
+                        dateSelector.style.height = 'auto';
+                        
+                        // 確保在不同頁面之間切換時調整日期選擇器
+                        if (window.innerWidth <= 768) {
+                            // 重新調用調整函數
+                            adjustDateSelectorForMobile();
+                        }
+                    }
+                }, 100);
             } else {
                 page.classList.remove('active');
             }
@@ -174,8 +189,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 dateInputsContainer.appendChild(endDateInput);
                 
                 // 將容器和按鈕添加到選擇器中
+                selector.innerHTML = ''; // 完全清空內容確保沒有殘留元素
                 selector.appendChild(dateInputsContainer);
                 selector.appendChild(button);
+                
+                // 統一日期選擇器高度
+                selector.style.height = 'auto';
                 
                 console.log('Date selector restructured successfully');
             });
@@ -192,4 +211,89 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }, 300);
-}); 
+});
+
+// 調整日期選擇器結構 - 將函數暴露給window對象
+window.adjustDateSelectorForMobile = function() {
+    console.log('Adjusting date selector for mobile');
+    const dateSelectors = document.querySelectorAll('.date-selector');
+    
+    dateSelectors.forEach(selector => {
+        // 檢查是否已經調整過
+        if (selector.querySelector('.date-inputs-container')) {
+            return;
+        }
+        
+        const inputs = selector.querySelectorAll('input[type="text"]');
+        if (inputs.length < 2) {
+            console.log('Not enough inputs found');
+            return;
+        }
+        
+        const separator = selector.querySelector('.date-separator');
+        const button = selector.querySelector('button');
+        
+        if (!separator || !button) {
+            console.log('Missing separator or button');
+            return;
+        }
+        
+        // 取得當前輸入框的值，確保不丟失已選擇的日期
+        const startDateValue = inputs[0].value;
+        const endDateValue = inputs[1].value;
+        
+        // 創建一個容器用於水平排列日期輸入框
+        const dateInputsContainer = document.createElement('div');
+        dateInputsContainer.className = 'date-inputs-container';
+        
+        // 不直接修改DOM結構，改為克隆元素以保持事件綁定
+        const startDateInput = inputs[0].cloneNode(true);
+        startDateInput.value = startDateValue;
+        
+        const endDateInput = inputs[1].cloneNode(true);
+        endDateInput.value = endDateValue;
+        
+        const separatorClone = separator.cloneNode(true);
+        const buttonClone = button.cloneNode(true);
+        
+        // 清空選擇器內容，但保留原始元素的引用
+        const parentElement = selector;
+        while (parentElement.firstChild) {
+            parentElement.removeChild(parentElement.firstChild);
+        }
+        
+        // 將日期輸入元素添加到容器中
+        dateInputsContainer.appendChild(startDateInput);
+        dateInputsContainer.appendChild(separatorClone);
+        dateInputsContainer.appendChild(endDateInput);
+        
+        // 將容器和按鈕添加到選擇器中
+        parentElement.appendChild(dateInputsContainer);
+        parentElement.appendChild(buttonClone);
+        
+        // 統一日期選擇器高度
+        parentElement.style.height = 'auto';
+        
+        // 重新初始化flatpickr
+        if (startDateInput.id === 'start-date' && endDateInput.id === 'end-date') {
+            // 觸發Overview頁面的重新初始化
+            if (window.app && window.app.pages['overview']) {
+                setTimeout(() => {
+                    window.app.pages['overview'].initializeDatePickers();
+                }, 0);
+            }
+        } else if (startDateInput.id === 'product-start-date' && endDateInput.id === 'product-end-date') {
+            // 觸發Product頁面的重新初始化
+            if (window.app && window.app.pages['product-comparison']) {
+                setTimeout(() => {
+                    window.app.pages['product-comparison'].initializeDatePickers();
+                }, 0);
+            }
+        }
+        
+        console.log('Date selector restructured successfully');
+    });
+};
+
+// 執行調整
+window.adjustDateSelectorForMobile(); 

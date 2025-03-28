@@ -72,12 +72,14 @@ h4 {
 }
 
 .nav-item:hover {
-    background-color: #2c2c2e;
+    background-color: #cccccc;
+    color: #000000;
 }
 
 .nav-item.active {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: #ededed;
     font-weight: 500;
+    color: #000000;
 }
 
 /* 主内容区样式 */
@@ -260,6 +262,17 @@ h4 {
     gap: 10px;
 }
 
+.selection-button:first-child,
+.selection-button:last-child,
+.selection-button {
+    background-color: #ededed;
+    color: #000000;
+}
+
+.selection-button:hover {
+    background-color: #cccccc;
+}
+
 .selection-button {
     padding: 5px 10px;
     border: none;
@@ -267,20 +280,14 @@ h4 {
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.2s;
+    background-color: #ededed;
+    color: #000000;
 }
 
-.selection-button:first-child {
-    background-color: #0066cc;
-    color: white;
-}
-
+.selection-button:first-child,
 .selection-button:last-child {
-    background-color: #ff453a;
-    color: white;
-}
-
-.selection-button:hover {
-    opacity: 0.9;
+    background-color: #ededed;
+    color: #000000;
 }
 
 .category-accordion {
@@ -808,7 +815,7 @@ h4 {
 }
 
 .close-modal-button:hover {
-    color: #ff453a;
+    color: #000000;
 }
 
 .add-product-button {
@@ -817,8 +824,8 @@ h4 {
     justify-content: center;
     width: 40px;
     height: 40px;
-    background-color: rgba(255, 255, 255, 0.2);
-    color: white;
+    background-color: #ededed;
+    color: #000000;
     border: none;
     border-radius: 50%;
     font-size: 24px;
@@ -827,13 +834,13 @@ h4 {
     right: 20px;
     top: 20px;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .add-product-button:hover {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: #cccccc;
     transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .chart-card.product-summary {
@@ -1003,6 +1010,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     align-items: center;
     margin-bottom: 20px;
     padding: 0 20px;
+    position: relative;
 }
 
 .page-title {
@@ -1012,9 +1020,15 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
 }
 
 .date-selector {
+    position: relative;
+    top: 0;
+    right: 0;
     display: flex;
     align-items: center;
     gap: 10px;
+    height: auto;
+    margin: 0;
+    padding: 0;
 }
 
 .date-selector input[type="text"] {
@@ -1025,25 +1039,33 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     background-color: var(--background-primary);
     color: var(--text-primary);
     font-size: 14px;
+    text-align: center;
 }
 
 .date-selector .date-separator {
     color: var(--text-secondary);
+    margin: 0 15px; /* 增加"至"文字兩側的間距，從原本的無指定間距改為15px */
 }
 
 .date-selector button {
     padding: 6px 12px;
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
+    background-color: #ededed;
+    color: #000000;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.2s;
+    white-space: nowrap;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 60px; /* 確保按鈕有足夠的寬度 */
 }
 
 .date-selector button:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: #cccccc;
 }
 
 /* 確保卡片容器與日期選擇器對齊 */
@@ -1070,7 +1092,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
 }
 
 .date-selector .date-inputs .date-separator {
-    margin: 0 10px;
+    margin: 0 15px; /* 統一PC端與移動端的日期分隔符號間距 */
 }
 
 /* 移動端適配 - 僅影響移動設備 */
@@ -1102,9 +1124,9 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         margin-bottom: 15px;
     }
     
+    /* 隱藏頁面標題 */
     .page-title {
-        margin-bottom: 15px;
-        font-size: 28px;
+        display: none;
     }
     
     /* 日期選擇器優化 */
@@ -1113,6 +1135,8 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         display: flex;
         flex-direction: column;
         gap: 15px;
+        margin-top: 0; /* 移除上方的間距 */
+        margin-bottom: 15px; /* 增加底部間距 */
     }
     
     /* 水平日期輸入區域 */
@@ -1238,14 +1262,50 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     }
 }
 
-/* 移動端底部導航 */
+/* 移動端底部導航 - 在所有螢幕尺寸下默認隱藏 */
+.mobile-nav {
+    display: none;
+}
+
+/* 移動端導航項目樣式 */
+.mobile-nav-item {
+    flex: 1;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 16px;
+    color: var(--text-secondary);
+    border-right: 1px solid #2c2c2e;
+    cursor: pointer;
+}
+
+.mobile-nav-item:last-child {
+    border-right: none;
+}
+
+.mobile-nav-item.active {
+    color: #000000;
+    background-color: #ededed;
+    font-weight: 500;
+}
+
+.mobile-nav-item:hover {
+    background-color: #cccccc;
+    color: #000000;
+}
+
+/* 移動端適配 */
 @media (max-width: 768px) {
     /* 隱藏側邊欄 */
     .sidebar {
         display: none;
     }
     
-    /* 創建底部導航欄 */
+    /* 隱藏頁面標題 - 在移動端上隱藏標題 */
+    .page-title {
+        display: none;
+    }
+    
+    /* 創建底部導航欄 - 只在移動端顯示 */
     .mobile-nav {
         display: flex;
         position: fixed;
@@ -1258,34 +1318,107 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
     }
     
-    .mobile-nav-item {
-        flex: 1;
-        text-align: center;
-        padding: 15px 0;
-        font-size: 16px;
-        color: var(--text-secondary);
-        border-right: 1px solid #2c2c2e;
-        cursor: pointer;
-    }
-    
-    .mobile-nav-item:last-child {
-        border-right: none;
-    }
-    
-    .mobile-nav-item:hover {
-        color: var(--text-primary);
-        background-color: rgba(255, 255, 255, 0.1);
-        font-weight: 500;
-    }
-
-    .mobile-nav-item.active {
-        color: var(--text-primary);
-        background-color: rgba(255, 255, 255, 0.1);
-        font-weight: 500;
-    }
-    
     /* 給主內容區域添加底部間距，避免被底部導航遮擋 */
     .main-content {
         padding-bottom: 60px;
     }
+}
+
+/* 修正移動端日期選擇器 */
+@media (max-width: 768px) {
+    .flatpickr-calendar {
+        max-width: 280px;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+}
+
+/* 水平日期輸入區域 */
+.date-inputs-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* flatpickr 樣式統一 */
+.flatpickr-input {
+    border: 1px solid var(--border-color);
+    background-color: var(--background-primary);
+    padding: 6px 10px;
+    border-radius: 4px;
+    color: var(--text-primary);
+    height: auto;
+}
+
+.flatpickr-calendar {
+    border: 1px solid var(--border-color);
+    background-color: var(--background-secondary);
+    z-index: 999 !important; /* 確保日曆顯示在最上層 */
+}
+
+/* 確保日期選擇器正常交互 */
+.flatpickr-input {
+    cursor: pointer;
+}
+
+/* 修正輸入框樣式 */
+.date-selector input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* 修正日期選擇器容器 */
+.flatpickr-wrapper {
+    height: auto !important;
+    display: inline-block !important;
+}
+
+/* 統一所有頁面的日期選擇器高度 */
+#overview-page .date-selector,
+#product-comparison-page .date-selector {
+    height: auto !important;
+    min-height: 32px;
+    margin: 0;
+    padding: 0;
+}
+
+.flatpickr-calendar {
+    border: 1px solid var(--border-color);
+    background-color: var(--background-secondary);
+}
+
+/* 優化日期選擇器樣式 */
+.flatpickr-calendar {
+    background-color: var(--background-primary) !important;
+    box-shadow: 0 3px 13px rgba(0, 0, 0, 0.3) !important;
+}
+
+.flatpickr-day {
+    color: var(--text-primary) !important;
+    border-radius: 4px !important;
+}
+
+.flatpickr-day.selected {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.flatpickr-day:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.flatpickr-months .flatpickr-month,
+.flatpickr-weekdays {
+    background-color: var(--background-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year {
+    color: var(--text-primary) !important;
+}
+
+.flatpickr-weekday {
+    color: var(--text-secondary) !important;
 } 
