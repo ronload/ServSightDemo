@@ -398,7 +398,7 @@ class OverviewPage {
                 labels: dates,
                 datasets: [
                     {
-                        label: '日營業額',
+                        label: '營業額',
                         data: amounts,
                         borderColor: '#2997ff',
                         backgroundColor: 'rgba(41, 151, 255, 0.1)',
@@ -463,8 +463,8 @@ class OverviewPage {
                 this.salesTrendChart.data.datasets.push({
                     label: '$20000',
                     data: twentyThousandLine,
-                    borderColor: 'rgba(255, 0, 0, 0.5)',
-                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
+                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
                     fill: false,
                     borderWidth: 1.5,
                     tension: 0.4,
@@ -502,7 +502,7 @@ class OverviewPage {
                         labels: dates,
                         datasets: [
                             {
-                                label: '日營業額',
+                                label: '營業額',
                                 data: amounts,
                                 borderColor: '#2997ff',
                                 backgroundColor: 'rgba(41, 151, 255, 0.1)',
@@ -608,8 +608,8 @@ class OverviewPage {
                 this.salesTrendChart.data.datasets.push({
                     label: '$20000',
                     data: twentyThousandLine,
-                    borderColor: 'rgba(255, 0, 0, 0.5)',
-                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
+                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
                     fill: false,
                     borderWidth: 1.5,
                     tension: 0.4,

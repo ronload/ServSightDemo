@@ -1033,7 +1033,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
 
 .date-selector button {
     padding: 6px 12px;
-    background-color: var(--primary-color);
+    background-color: rgba(255, 255, 255, 0.1);
     color: white;
     border: none;
     border-radius: 4px;
@@ -1043,7 +1043,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
 }
 
 .date-selector button:hover {
-    background-color: var(--primary-color-dark);
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 /* 確保卡片容器與日期選擇器對齊 */
@@ -1130,7 +1130,6 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         font-size: 18px;
         text-align: center;
         border-radius: 10px;
-        background-color: #121212;
         border: 1px solid #333;
     }
     
@@ -1236,5 +1235,57 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     .chart-card, .stat-card {
         width: auto;
         max-width: 100%;
+    }
+}
+
+/* 移動端底部導航 */
+@media (max-width: 768px) {
+    /* 隱藏側邊欄 */
+    .sidebar {
+        display: none;
+    }
+    
+    /* 創建底部導航欄 */
+    .mobile-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: rgba(10, 10, 10, 0.95);
+        border-top: 1px solid #2c2c2e;
+        z-index: 1000;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .mobile-nav-item {
+        flex: 1;
+        text-align: center;
+        padding: 15px 0;
+        font-size: 16px;
+        color: var(--text-secondary);
+        border-right: 1px solid #2c2c2e;
+        cursor: pointer;
+    }
+    
+    .mobile-nav-item:last-child {
+        border-right: none;
+    }
+    
+    .mobile-nav-item:hover {
+        color: var(--text-primary);
+        background-color: rgba(255, 255, 255, 0.1);
+        font-weight: 500;
+    }
+
+    .mobile-nav-item.active {
+        color: var(--text-primary);
+        background-color: rgba(255, 255, 255, 0.1);
+        font-weight: 500;
+    }
+    
+    /* 給主內容區域添加底部間距，避免被底部導航遮擋 */
+    .main-content {
+        padding-bottom: 60px;
     }
 } 

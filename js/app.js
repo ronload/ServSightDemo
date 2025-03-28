@@ -14,6 +14,7 @@ class App {
         };
         
         this.navItems = null;
+        this.mobileNavItems = null; // 新增移動端導航項
         this.pageElements = null;
         
         // 等待 DOM 完全加載後再初始化
@@ -31,6 +32,7 @@ class App {
             
             // 獲取頁面元素
             this.navItems = document.querySelectorAll('.nav-item');
+            this.mobileNavItems = document.querySelectorAll('.mobile-nav-item'); // 獲取移動端導航項
             this.pageElements = document.querySelectorAll('.page');
             
             // 初始化數據加載器
@@ -39,8 +41,16 @@ class App {
                 console.log('DataLoader initialized');
             }
             
-            // 绑定导航事件
+            // 绑定桌面端导航事件
             this.navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const pageId = item.getAttribute('data-page');
+                    this.navigateTo(pageId);
+                });
+            });
+            
+            // 绑定移動端底部导航事件
+            this.mobileNavItems.forEach(item => {
                 item.addEventListener('click', () => {
                     const pageId = item.getAttribute('data-page');
                     this.navigateTo(pageId);
@@ -82,8 +92,17 @@ class App {
     navigateTo(pageId) {
         console.log('Navigating to:', pageId);
         
-        // 更新导航项的活动状态
+        // 更新桌面端导航项的活动状态
         this.navItems.forEach(item => {
+            if (item.getAttribute('data-page') === pageId) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+        
+        // 更新移動端导航项的活动状态
+        this.mobileNavItems.forEach(item => {
             if (item.getAttribute('data-page') === pageId) {
                 item.classList.add('active');
             } else {
