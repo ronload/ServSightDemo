@@ -76,7 +76,8 @@ h4 {
 }
 
 .nav-item.active {
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: #ededed;
+    color: #000000;
     font-weight: 500;
 }
 
@@ -99,14 +100,14 @@ h4 {
     width: 100%;
 }
 
-/* 全局卡片容器間距 */
+/* 全局卡片容器间距 */
 .date-picker,
 .stats-container,
 .charts-container {
     margin: 0 20px 20px 20px;
 }
 
-/* 移除舊的日期選擇器和控制列樣式 */
+/* 移除舊的日期选择器和控制列样式 */
 .controls-row,
 .date-picker,
 .date-picker-label,
@@ -116,7 +117,7 @@ h4 {
     display: none;
 }
 
-/* 統計卡片樣式 */
+/* 统计卡片样式 */
 .stats-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -167,7 +168,7 @@ h4 {
     order: 3;
 }
 
-/* 營業額相關數字的統一樣式 */
+/* 营业额相关数字的统一样式 */
 .stat-card.sales-amount .stat-value {
     color: #2997ff;
     font-size: 28px;
@@ -180,7 +181,7 @@ h4 {
     font-weight: 600;
 }
 
-/* 圖表容器樣式 */
+/* 图表容器样式 */
 .charts-container {
     margin: 0 20px;
 }
@@ -207,7 +208,7 @@ h4 {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
-/* 營業額走勢圖表高度 */
+/* 营业额走势图表高度 */
 #sales-trend-chart {
     height: 600px !important;
 }
@@ -231,7 +232,7 @@ h4 {
     height: 100%;
 }
 
-/* 商品比較頁面樣式 */
+/* 商品比较页面样式 */
 .controls-row {
     display: flex;
     gap: 20px;
@@ -312,7 +313,7 @@ h4 {
     padding: 10px 15px;
 }
 
-/* 牛肉麵類別的容器樣式 */
+/* 牛肉面类别的容器样式 */
 .product-container.beef-noodles {
     display: flex;
     flex-direction: column;
@@ -320,7 +321,7 @@ h4 {
     padding: 15px;
 }
 
-/* 其他類別的容器樣式 */
+/* 其他类别的容器样式 */
 .product-container.other-category {
     display: flex;
     flex-wrap: wrap;
@@ -376,7 +377,7 @@ h4 {
     white-space: nowrap;
 }
 
-/* 商品比較圖表樣式 */
+/* 商品比较图表样式 */
 .product-comparison .charts-row {
     display: grid;
     grid-template-columns: 3fr 1fr;
@@ -436,7 +437,7 @@ h4 {
     margin-top: 5px;
 }
 
-/* 響應式設計 */
+/* 响应式设计 */
 @media (max-width: 1200px) {
     .product-comparison .charts-row {
         grid-template-columns: 1fr;
@@ -472,12 +473,17 @@ h4 {
     
     .product-selector {
         margin-top: 10px;
-    padding: 10px;
+        padding: 10px;
     }
     
     .product-checkbox {
         padding: 4px 8px;
         font-size: 14px;
+    }
+
+    /* 增加统计卡片与顶部导航栏之间的间距 */
+    .stats-container {
+        margin-top: 30px;
     }
 }
 
@@ -514,55 +520,65 @@ h4 {
     .product-selector {
         width: 100%;
     }
-    }
-    
+}
+
 @media (max-width: 768px) {
-    .stats-container {
-        grid-template-columns: 1fr;
+    .sidebar {
+        display: none;
     }
     
-    .date-picker {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 15px;
-        width: 100%;
+    .mobile-nav {
+        display: block;
     }
     
-    .date-range-picker {
-        flex-wrap: wrap;
-        gap: 8px;
-        width: 100%;
-        max-width: none;
+    .mobile-top-nav {
+        display: block;
     }
     
-    .date-input {
-        width: 100%;
-        min-width: auto;
+    .main-content {
+        padding-top: 60px;
+        padding-bottom: 70px;
     }
     
-    .date-confirm-btn {
-        width: 100%;
-        margin-top: 10px;
-        margin-left: 0;
+    .page-header {
+        display: none;
     }
     
-    .chart-content {
-        height: 300px;
+    .page-header .date-selector {
+        display: none;
     }
     
-    .product-checkbox {
-        padding: 6px 10px;
-    }
-    
-    .date-picker,
-    .stats-container,
-    .charts-container,
     .controls-row {
-        margin: 0 10px 15px 10px;
+        flex-direction: column;
+    }
+    
+    .controls-row .date-picker,
+    .product-selector {
+        width: 100%;
+    }
+    
+    /* 增加统计卡片与顶部导航栏之间的间距 */
+    .stats-container {
+        margin-top: 30px;
+        margin-left: 10px;
+        margin-right: 10px;
+        width: calc(100% - 20px);
+    }
+    
+    .charts-container {
+        margin-left: 10px;
+        margin-right: 10px;
+        width: calc(100% - 20px);
+    }
+    
+    /* 確保所有內容區元素的寬度一致 */
+    .chart-card, .stat-card {
+        width: 100%;
+        max-width: 100%;
     }
 }
 
-/* 修正商品選擇器的滾動條樣式 */
+/* 修正商品选择器的滚动条样式 */
 .category-accordion::-webkit-scrollbar {
     width: 8px;
 }
@@ -579,7 +595,7 @@ h4 {
     background: #4c4c4e;
 }
 
-/* 商品銷售總額樣式 */
+/* 商品销售总额样式 */
 .product-sales-item {
     display: flex;
     justify-content: space-between;
@@ -656,7 +672,7 @@ h4 {
     font-size: 13px;
 }
 
-/* 美化滾動條 */
+/* 美化滚动条 */
 .product-sales-list::-webkit-scrollbar {
     width: 8px;
 }
@@ -673,7 +689,7 @@ h4 {
     background: #4c4c4e;
 }
 
-/* 確保商品銷售總額卡片和趨勢圖表的高度一致 */
+/* 确保商品销售总额卡片和趋势图表的高度一致 */
 .chart-card.product-summary .chart-content {
     height: 650px;
     overflow: hidden;
@@ -865,7 +881,7 @@ h4 {
     font-size: 13px;
 }
 
-/* 美化滾動條 */
+/* 美化滚动条 */
 .product-sales-list::-webkit-scrollbar {
     width: 8px;
 }
@@ -896,7 +912,7 @@ h4 {
     border-radius: 6px;
 }
 
-/* 更新商品選擇器樣式以適應彈窗 */
+/* 更新商品选择器样式以适应弹窗 */
 .product-selector {
     background: #0a0a0a;
     box-shadow: none;
@@ -910,7 +926,7 @@ h4 {
     max-height: calc(80vh - 150px);
 }
 
-/* 日期選擇器彈出日曆樣式 */
+/* 日期选择器弹出日历样式 */
 input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
     opacity: 0.6;
@@ -929,7 +945,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     color: #ffffff;
 }
 
-/* 頁面標題和日期選擇器容器 */
+/* 页面标题和日期选择器容器 */
 .page-header {
     display: flex;
     justify-content: space-between;
@@ -955,7 +971,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     padding: 6px 10px;
     border: 1px solid var(--border-color);
     border-radius: 4px;
-    background-color: var(--background-primary);
+    background-color: var(--card-background);
     color: var(--text-primary);
     font-size: 14px;
 }
@@ -966,8 +982,8 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
 
 .date-selector button {
     padding: 6px 12px;
-    background-color: var(--primary-color);
-    color: white;
+    background-color: #ededed;
+    color: #000000;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -976,20 +992,20 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
 }
 
 .date-selector button:hover {
-    background-color: var(--primary-color-dark);
+    background-color: #cccccc;
 }
 
-/* 確保卡片容器與日期選擇器對齊 */
+/* 确保卡片容器与日期选择器对齐 */
 .chart-container {
     padding: 0;
 }
 
-/* 移除舊的日期選擇器樣式 */
+/* 移除旧的日期选择器样式 */
 .overview-header {
     display: none;
 }
 
-/* 日期輸入區域樣式 - 應用於所有設備 */
+/* 日期输入区域样式 - 应用于所有设备 */
 .date-selector .date-inputs {
     display: flex;
     align-items: center;
@@ -1006,9 +1022,9 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     margin: 0 10px;
 }
 
-/* 移動端適配 - 僅影響移動設備 */
+/* 移动端适配 - 仅影响移动设备 */
 @media (max-width: 768px) {
-    /* 整體頁面結構優化 */
+    /* 整体页面结构优化 */
     .container {
         padding-top: 0;
     }
@@ -1018,7 +1034,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         overflow-x: hidden;
     }
     
-    /* 側邊欄在移動端的優化 */
+    /* 侧边栏在移动端的优化 */
     .sidebar {
         padding: 10px 0;
     }
@@ -1027,7 +1043,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         padding: 12px 15px;
     }
     
-    /* 頁面標題和日期選擇器容器 */
+    /* 页面标题和日期选择器容器 */
     .page-header {
         flex-direction: column;
         align-items: flex-start;
@@ -1040,7 +1056,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         font-size: 28px;
     }
     
-    /* 日期選擇器優化 */
+    /* 日期选择器优化 */
     .date-selector {
         width: 100%;
         display: flex;
@@ -1048,7 +1064,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         gap: 15px;
     }
     
-    /* 水平日期輸入區域 */
+    /* 水平日期输入区域 */
     .date-inputs-container {
         display: flex;
         justify-content: space-between;
@@ -1063,7 +1079,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         font-size: 18px;
         text-align: center;
         border-radius: 10px;
-        background-color: #121212;
+        background-color: var(--card-background);
         border: 1px solid #333;
     }
     
@@ -1080,7 +1096,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         margin-top: 10px;
     }
     
-    /* 統計卡片排版優化 - 使用網格佈局 */
+    /* 统计卡片排版优化 - 使用网格布局 */
     .stats-container {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -1105,7 +1121,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         font-size: 14px;
     }
     
-    /* 圖表高度優化 */
+    /* 图表高度优化 */
     .chart-card {
         margin-bottom: 15px;
         border-radius: 10px;
@@ -1120,19 +1136,19 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         height: 250px !important;
     }
     
-    /* 圖表標題和內容間距 */
+    /* 图表标题和内容间距 */
     .chart-card h3 {
         margin-bottom: 10px;
         font-size: 18px;
         padding: 10px 15px;
     }
     
-    /* 確保圖表容器有適當間距 */
+    /* 确保图表容器有适当间距 */
     .charts-container {
         margin: 0 10px;
     }
     
-    /* 商品銷售明細卡片優化 */
+    /* 商品销售明细卡片优化 */
     .product-sales-item {
         padding: 12px 15px;
         margin-bottom: 10px;
@@ -1150,15 +1166,367 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         font-size: 13px;
     }
     
-    /* 調整觸摸區域大小 */
+    /* 调整触摸区域大小 */
     .product-checkbox {
         padding: 10px 15px;
         margin: 5px;
     }
     
-    /* 避免水平滾動 */
+    /* 避免水平滚动 */
     .chart-card, .stat-card {
         width: auto;
         max-width: 100%;
     }
+    
+    /* 增加统计卡片与顶部导航栏之间的间距 */
+    .stats-container {
+        margin-top: 20px;
+    }
+}
+
+/* 移动端底部导航栏 */
+.mobile-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid #2c2c2e;
+    z-index: 1000;
+    padding: 10px 0;
+}
+
+.mobile-nav .nav-menu {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0;
+    margin: 0;
+}
+
+.mobile-nav .nav-item {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    margin: 0 8px;
+}
+
+.mobile-nav .nav-item.active {
+    background-color: #ededed;
+    color: #000000;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+    
+    .mobile-nav {
+        display: block;
+    }
+    
+    .main-content {
+        padding-bottom: 70px;
+    }
+    
+    .controls-row {
+        flex-direction: column;
+    }
+    
+    .controls-row .date-picker,
+    .product-selector {
+        width: 100%;
+    }
+}
+
+/* 移动端顶部日期选择器导航栏 */
+.mobile-top-nav {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid #2c2c2e;
+    z-index: 1000;
+    padding: 10px 0;
+}
+
+.mobile-date-selector {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    width: calc(100% - 20px);
+    margin: 0 auto;
+}
+
+.mobile-date-selector input {
+    flex: 1;
+    min-width: 0;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #3c3c3e;
+    color: #ffffff;
+    padding: 8px 4px;
+    font-size: 14px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.mobile-date-selector input:focus {
+    outline: none;
+    border-bottom-color: #ededed;
+}
+
+.mobile-date-selector .date-separator {
+    flex: 0 0 auto;
+    color: #a0a0a0;
+    font-size: 14px;
+    white-space: nowrap;
+    padding: 0 4px;
+}
+
+.mobile-date-selector button {
+    flex: 0 0 auto;
+    background-color: #ededed;
+    border: 1px solid #ededed;
+    border-radius: 4px;
+    color: #000000;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+    min-width: 60px;
+}
+
+.mobile-date-selector button:hover {
+    background-color: #ededed;
+    color: #000000;
+}
+
+/* 较小屏幕的适配 */
+@media (max-width: 420px) {
+    .mobile-date-selector {
+        gap: 4px;
+    }
+    
+    .mobile-date-selector input {
+        padding: 6px 2px;
+        font-size: 13px;
+    }
+    
+    .mobile-date-selector .date-separator {
+        padding: 0 2px;
+        font-size: 13px;
+    }
+    
+    .mobile-date-selector button {
+        padding: 5px 10px;
+        font-size: 13px;
+        min-width: 50px;
+    }
+}
+
+@media (max-width: 360px) {
+    .mobile-date-selector input {
+        padding: 5px 1px;
+        font-size: 12px;
+    }
+    
+    .mobile-date-selector button {
+        padding: 4px 8px;
+        font-size: 12px;
+        min-width: 45px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+    
+    .mobile-nav {
+        display: block;
+    }
+    
+    .mobile-top-nav {
+        display: block;
+    }
+    
+    .main-content {
+        padding-top: 60px;
+        padding-bottom: 70px;
+    }
+    
+    .page-header {
+        display: none;
+    }
+    
+    .page-header .date-selector {
+        display: none;
+    }
+    
+    .controls-row {
+        flex-direction: column;
+    }
+    
+    .controls-row .date-picker,
+    .product-selector {
+        width: 100%;
+    }
+    
+    /* 增加统计卡片与顶部导航栏之间的间距 */
+    .stats-container {
+        margin-top: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
+        width: calc(100% - 20px);
+    }
+    
+    .charts-container {
+        margin-left: 10px;
+        margin-right: 10px;
+        width: calc(100% - 20px);
+    }
+    
+    /* 確保所有內容區元素的寬度一致 */
+    .chart-card, .stat-card {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+/* 修复移动端日期选择器弹出层 */
+.flatpickr-calendar {
+    z-index: 1100 !important;
+    background-color: #1c1c1e !important;
+    border: 1px solid #3c3c3e !important;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4) !important;
+    border-radius: 8px !important;
+    max-width: 320px !important;
+}
+
+body.flatpickr-mobile-open .mobile-top-nav {
+    z-index: 1099 !important;
+}
+
+/* 确保日历不会超出屏幕范围 */
+.flatpickr-calendar.open {
+    display: inline-block !important;
+}
+
+.flatpickr-months {
+    background-color: #1c1c1e !important;
+    color: #ffffff !important;
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+    padding-top: 8px !important;
+}
+
+.flatpickr-month {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+.flatpickr-weekdays {
+    background-color: #1c1c1e !important;
+    color: #a0a0a0 !important;
+}
+
+.flatpickr-weekday {
+    color: #a0a0a0 !important;
+}
+
+.flatpickr-day {
+    color: #ffffff !important;
+    background-color: transparent !important;
+}
+
+.flatpickr-day.selected, 
+.flatpickr-day.startRange, 
+.flatpickr-day.endRange, 
+.flatpickr-day.selected.inRange, 
+.flatpickr-day.startRange.inRange, 
+.flatpickr-day.endRange.inRange, 
+.flatpickr-day.selected:focus, 
+.flatpickr-day.startRange:focus, 
+.flatpickr-day.endRange:focus, 
+.flatpickr-day.selected:hover, 
+.flatpickr-day.startRange:hover, 
+.flatpickr-day.endRange:hover {
+    background-color: #0078d4 !important;
+    border-color: #0078d4 !important;
+    color: #ffffff !important;
+}
+
+.flatpickr-day.inRange {
+    background-color: rgba(0, 120, 212, 0.3) !important;
+    border-color: rgba(0, 120, 212, 0.3) !important;
+}
+
+.flatpickr-day.today {
+    border-color: #0078d4 !important;
+}
+
+.flatpickr-day.today:hover, 
+.flatpickr-day.today:focus {
+    background-color: #0078d4 !important;
+    border-color: #0078d4 !important;
+    color: #ffffff !important;
+}
+
+.flatpickr-day.disabled, 
+.flatpickr-day.disabled:hover {
+    color: #484848 !important;
+    background-color: transparent !important;
+}
+
+.flatpickr-current-month input.cur-year {
+    color: #ffffff !important;
+}
+
+.flatpickr-time {
+    background-color: #1c1c1e !important;
+}
+
+.numInputWrapper span.arrowUp,
+.numInputWrapper span.arrowDown {
+    border-color: #484848 !important;
+}
+
+.numInputWrapper span.arrowUp:after {
+    border-bottom-color: #a0a0a0 !important;
+}
+
+.numInputWrapper span.arrowDown:after {
+    border-top-color: #a0a0a0 !important;
+}
+
+@media (max-width: 768px) {
+    /* 确保移动端顶部导航栏不会被遮挡 */
+    body.flatpickr-open .mobile-top-nav {
+        z-index: 1101 !important;
+    }
+    
+    .mobile-date-selector input {
+        text-align: center;
+    }
+}
+
+.mobile-date-selector input.flatpickr-input:focus {
+    outline: none !important;
+    border-bottom-color: #ededed !important;
+}
+
+.mobile-date-selector input.flatpickr-input.active {
+    border-bottom-color: #ededed !important;
 } 

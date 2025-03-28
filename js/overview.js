@@ -443,8 +443,8 @@ class OverviewPage {
                 this.salesTrendChart.data.datasets.push({
                     label: '$20000',
                     data: twentyThousandLine,
-                    borderColor: 'rgba(255, 0, 0, 0.5)',
-                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
+                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
                     fill: false,
                     borderWidth: 1.5,
                     tension: 0.4,
@@ -568,8 +568,8 @@ class OverviewPage {
                 this.salesTrendChart.data.datasets.push({
                     label: '$20000',
                     data: twentyThousandLine,
-                    borderColor: 'rgba(255, 0, 0, 0.5)',
-                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
+                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
                     fill: false,
                     borderWidth: 1.5,
                     tension: 0.4,
@@ -1050,13 +1050,13 @@ class OverviewPage {
                             label: '平均營業額',
                             data: chartData,
                             backgroundColor: [
-                                'rgba(255, 99, 132, 0.7)',
                                 'rgba(54, 162, 235, 0.7)',
-                                'rgba(255, 206, 86, 0.7)',
-                                'rgba(75, 192, 192, 0.7)',
-                                'rgba(153, 102, 255, 0.7)',
-                                'rgba(255, 159, 64, 0.7)',
-                                'rgba(201, 203, 207, 0.7)'
+                                'rgba(54, 162, 235, 0.7)',
+                                'rgba(54, 162, 235, 0.7)',
+                                'rgba(54, 162, 235, 0.7)',
+                                'rgba(54, 162, 235, 0.7)',
+                                'rgba(54, 162, 235, 0.7)',
+                                'rgba(54, 162, 235, 0.7)',
                             ],
                             borderWidth: 1
                         }]
@@ -1072,28 +1072,6 @@ class OverviewPage {
                                 callbacks: {
                                     label: function(context) {
                                         return `平均營業額: $${formatAmount(context.raw)}`;
-                                    }
-                                }
-                            },
-                            annotation: {
-                                annotations: {
-                                    twentyThousandLine: {
-                                        type: 'line',
-                                        yMin: 20000,
-                                        yMax: 20000,
-                                        borderColor: 'rgb(255, 0, 0)',
-                                        borderWidth: 2,
-                                        borderDash: [5, 5],
-                                        label: {
-                                            display: true,
-                                            content: '$20,000',
-                                            position: 'end',
-                                            backgroundColor: 'rgba(255, 0, 0, 0.8)',
-                                            color: 'white',
-                                            font: {
-                                                weight: 'bold'
-                                            }
-                                        }
                                     }
                                 }
                             }
@@ -1177,12 +1155,12 @@ class OverviewPage {
                     backgroundColor: function(context) {
                         const index = context.dataIndex;
                         const value = context.dataset.data[index];
-                        return value > 20000 ? 'rgba(255, 0, 0, 0.7)' : 'rgba(41, 151, 255, 0.7)';
+                        return 'rgba(255, 255, 255, 0.7)';
                     },
                     borderColor: function(context) {
                         const index = context.dataIndex;
                         const value = context.dataset.data[index];
-                        return value > 20000 ? 'rgba(255, 0, 0, 1)' : 'rgba(41, 151, 255, 1)';
+                        return 'rgba(255, 255, 255, 0.7)';
                     },
                     borderWidth: 1
                 }]
@@ -1198,29 +1176,6 @@ class OverviewPage {
                     },
                     legend: {
                         display: false
-                    },
-                    annotation: {
-                        annotations: {
-                            line1: {
-                                type: 'line',
-                                mode: 'horizontal',
-                                scaleID: 'y',
-                                value: 20000,
-                                borderColor: 'rgb(255, 0, 0)',
-                                borderWidth: 2,
-                                borderDash: [5, 5],
-                                label: {
-                                    display: true,
-                                    content: '$20,000',
-                                    position: 'end',
-                                    backgroundColor: 'rgba(255, 0, 0, 0.8)',
-                                    color: 'white',
-                                    font: {
-                                        weight: 'bold'
-                                    }
-                                }
-                            }
-                        }
                     }
                 },
                 scales: {
