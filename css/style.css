@@ -1008,7 +1008,6 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
     padding: 0 20px;
     position: relative;
 }
@@ -1077,7 +1076,6 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         flex-direction: column;
         align-items: flex-start;
         padding: 10px 15px;
-        margin-bottom: 15px;
     }
     
     /* 隱藏頁面標題 */
@@ -1383,4 +1381,56 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
 
 .flatpickr-weekday {
     color: var(--text-secondary) !important;
+}
+
+/* 移動端顯示優化 */
+@media (max-width: 768px) {
+    /* 確保日期輸入容器水平排列 */
+    .date-inputs-container {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        margin-bottom: 10px !important;
+    }
+    
+    /* 確保日期輸入框樣式正確 */
+    .date-inputs-container input[type="text"] {
+        width: 44% !important;
+        height: 54px !important;
+        font-size: 16px !important;
+        text-align: center !important;
+        border-radius: 12px !important;
+        border: 1px solid #333 !important;
+        background: #0a0a0a !important;
+        color: #fff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* 確保日期分隔符樣式正確 */
+    .date-inputs-container .date-separator {
+        display: inline-block !important;
+        width: 10% !important;
+        text-align: center !important;
+        color: #a0a0a0 !important;
+        font-size: 16px !important;
+    }
+    
+    /* 確保日期確認按鈕樣式正確 */
+    #date-confirm, #product-date-confirm {
+        display: block !important;
+        width: 100% !important;
+        height: 54px !important;
+        line-height: 54px !important;
+        font-size: 18px !important;
+        font-weight: 500 !important;
+        background-color: #ededed !important;
+        color: #000 !important;
+        border: none !important;
+        border-radius: 12px !important;
+        margin: 10px auto 0 !important;
+    }
 } 

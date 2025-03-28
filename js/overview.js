@@ -57,11 +57,16 @@ class OverviewPage {
             
             console.log('All required elements found');
             
-            // 初始化日期選擇器
+            // 先初始化页面，設置默認日期值
+            this.init();
+            
+            // 然後初始化日期選擇器
             this.initializeDatePickers();
             
-            // 初始化頁面
-            this.init();
+            // 最後加載數據
+            console.log('Loading initial data...');
+            setTimeout(() => this.loadData(), 100);
+            
             console.log('OverviewPage initialized successfully');
             
         } catch (error) {
@@ -98,8 +103,8 @@ class OverviewPage {
             
             console.log('Page initialized successfully');
             
-            // 初始加載數據
-            this.loadData();
+            // 初始加載數據將在日期選擇器初始化後進行
+            // 這樣可以確保日期選擇器更新後的值被正確使用
             
         } catch (error) {
             console.error('Error in init:', error);
@@ -1260,6 +1265,33 @@ class OverviewPage {
         try {
             console.log('Initializing date pickers...');
             
+            // 判斷是否為移動端
+            const isMobile = window.matchMedia("(max-width: 768px)").matches;
+            console.log('Initializing date pickers for:', isMobile ? 'mobile' : 'desktop');
+            
+            // 確保日期輸入框有默認值
+            if (!this.startDateInput.value) {
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                const minDate = new Date(2025, 1, 1);
+                const defaultStartDate = thirtyDaysAgo < minDate ? minDate : thirtyDaysAgo;
+                this.startDateInput.value = formatDateForInput(defaultStartDate);
+            }
+            
+            if (!this.endDateInput.value) {
+                this.endDateInput.value = formatDateForInput(new Date());
+            }
+            
+            console.log('Date input values:', {
+                start: this.startDateInput.value,
+                end: this.endDateInput.value
+            });
+            
+            // 先應用樣式，確保在flatpickr初始化前就有正確的樣式
+            if (isMobile) {
+                this.applyMobileStyles();
+            }
+            
             // 如果已有實例，先銷毀它們
             if (this.startDatePicker) {
                 this.startDatePicker.destroy();
@@ -1267,10 +1299,6 @@ class OverviewPage {
             if (this.endDatePicker) {
                 this.endDatePicker.destroy();
             }
-            
-            // 判斷是否為移動端
-            const isMobile = window.matchMedia("(max-width: 768px)").matches;
-            console.log('Initializing date pickers for:', isMobile ? 'mobile' : 'desktop');
             
             // flatpickr 配置
             const commonConfig = {
@@ -1283,54 +1311,56 @@ class OverviewPage {
                 mode: "single"
             };
             
+            // 計算默認日期
+            const defaultStartDate = (() => {
+                if (this.startDateInput.value) return this.startDateInput.value;
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                return thirtyDaysAgo;
+            })();
+            
+            const defaultEndDate = this.endDateInput.value || new Date();
+            
             // 重新初始化日期選擇器
             this.startDatePicker = flatpickr("#start-date", {
                 ...commonConfig,
-                defaultDate: this.startDateInput.value || "2025-02-01",
+                defaultDate: defaultStartDate,
                 position: "auto",
                 onChange: (selectedDates, dateStr) => {
                     if (selectedDates[0]) {
                         this.endDatePicker.set('minDate', dateStr);
                     }
                     
-                    // 防止樣式被覆蓋
+                    // 防止樣式被覆蓋，但使用節流方式避免過多調用
                     if (isMobile) {
-                        setTimeout(() => this.applyMobileStyles(), 0);
+                        if (this._stylesTimeout) clearTimeout(this._stylesTimeout);
+                        this._stylesTimeout = setTimeout(() => this.applyMobileStyles(), 50);
                     }
-                },
-                onOpen: () => {
-                    if (isMobile) setTimeout(() => this.applyMobileStyles(), 0);
-                },
-                onClose: () => {
-                    if (isMobile) setTimeout(() => this.applyMobileStyles(), 0);
                 }
             });
 
             this.endDatePicker = flatpickr("#end-date", {
                 ...commonConfig,
-                defaultDate: this.endDateInput.value || new Date(),
+                defaultDate: defaultEndDate,
                 position: "auto",
                 onChange: (selectedDates, dateStr) => {
                     if (selectedDates[0]) {
                         this.startDatePicker.set('maxDate', dateStr);
                     }
                     
-                    // 防止樣式被覆蓋
+                    // 防止樣式被覆蓋，但使用節流方式避免過多調用
                     if (isMobile) {
-                        setTimeout(() => this.applyMobileStyles(), 0);
+                        if (this._stylesTimeout) clearTimeout(this._stylesTimeout);
+                        this._stylesTimeout = setTimeout(() => this.applyMobileStyles(), 50);
                     }
-                },
-                onOpen: () => {
-                    if (isMobile) setTimeout(() => this.applyMobileStyles(), 0);
-                },
-                onClose: () => {
-                    if (isMobile) setTimeout(() => this.applyMobileStyles(), 0);
                 }
             });
             
-            // 移動端立即應用自定義樣式
+            // 移動端再次應用自定義樣式，使用多個延遲確保樣式能被正確應用
             if (isMobile) {
                 setTimeout(() => this.applyMobileStyles(), 0);
+                setTimeout(() => this.applyMobileStyles(), 100);
+                setTimeout(() => this.applyMobileStyles(), 300);
             }
             
             console.log('Date pickers initialized successfully');
@@ -1351,13 +1381,83 @@ class OverviewPage {
         const endInput = document.getElementById('end-date');
         
         if (startInput && endInput) {
+            // 修改日期選擇器父容器樣式，確保水平佈局
+            const dateSelector = startInput.closest('.date-selector');
+            if (dateSelector) {
+                dateSelector.style.display = 'block';
+                dateSelector.style.width = '100%';
+            }
+            
+            // 確保兩個輸入框都有值
+            const startValue = startInput.value || formatDateForInput((() => {
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                const minDate = new Date(2025, 1, 1);
+                return thirtyDaysAgo < minDate ? minDate : thirtyDaysAgo;
+            })());
+            
+            const endValue = endInput.value || formatDateForInput(new Date());
+            
+            console.log('Input values for mobile styling:', { startValue, endValue });
+            
+            // 創建或獲取輸入框容器
+            let inputContainer = document.querySelector('.date-selector .date-inputs-container');
+            if (!inputContainer) {
+                inputContainer = document.createElement('div');
+                inputContainer.className = 'date-inputs-container';
+                
+                // 將開始日期、分隔符和結束日期移到容器中
+                const separator = document.querySelector('.date-selector .date-separator');
+                if (separator) {
+                    separator.remove();
+                }
+                
+                // 移除現有輸入框
+                startInput.remove();
+                endInput.remove();
+                
+                // 添加新的水平佈局
+                inputContainer.innerHTML = `
+                    <input type="text" id="start-date" value="${startValue}" placeholder="開始日期">
+                    <span class="date-separator">至</span>
+                    <input type="text" id="end-date" value="${endValue}" placeholder="結束日期">
+                `;
+                
+                // 將容器添加到選擇器中
+                const button = document.querySelector('.date-selector button');
+                if (button) {
+                    dateSelector.insertBefore(inputContainer, button);
+                } else {
+                    dateSelector.appendChild(inputContainer);
+                }
+            }
+            
+            // 重新獲取輸入框
+            const newStartInput = document.getElementById('start-date');
+            const newEndInput = document.getElementById('end-date');
+            const separator = document.querySelector('.date-selector .date-separator');
+            
             // 應用更合適的中等尺寸樣式
+            inputContainer.style.display = 'flex';
+            inputContainer.style.alignItems = 'center';
+            inputContainer.style.justifyContent = 'space-between';
+            inputContainer.style.width = '100%';
+            inputContainer.style.marginBottom = '10px';
+            
             const inputStyle = 'width:44%; height:54px; font-size:16px; text-align:center; border-radius:12px; ' +
                 'border:1px solid #333; background:#0a0a0a; color:#fff; padding:0; margin:0; ' +
                 '-webkit-appearance:none; box-sizing:border-box;';
                 
-            startInput.setAttribute('style', inputStyle);
-            endInput.setAttribute('style', inputStyle);
+            newStartInput.setAttribute('style', inputStyle);
+            newEndInput.setAttribute('style', inputStyle);
+            
+            if (separator) {
+                separator.style.display = 'inline-block';
+                separator.style.width = '10%';
+                separator.style.textAlign = 'center';
+                separator.style.color = '#a0a0a0';
+                separator.style.fontSize = '16px';
+            }
             
             // 確認按鈕樣式
             const confirmBtn = document.getElementById('date-confirm');
@@ -1369,7 +1469,7 @@ class OverviewPage {
                 confirmBtn.setAttribute('style', btnStyle);
             }
             
-            console.log('Mobile styles applied: medium size variant');
+            console.log('Mobile styles applied: horizontal layout');
         }
     }
 } 
