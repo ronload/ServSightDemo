@@ -14,7 +14,6 @@ class App {
         };
         
         this.navItems = null;
-        this.mobileNavItems = null; // 新增移動端導航項
         this.pageElements = null;
         
         // 等待 DOM 完全加載後再初始化
@@ -32,7 +31,6 @@ class App {
             
             // 獲取頁面元素
             this.navItems = document.querySelectorAll('.nav-item');
-            this.mobileNavItems = document.querySelectorAll('.mobile-nav-item'); // 獲取移動端導航項
             this.pageElements = document.querySelectorAll('.page');
             
             // 初始化數據加載器
@@ -41,16 +39,8 @@ class App {
                 console.log('DataLoader initialized');
             }
             
-            // 绑定桌面端导航事件
+            // 绑定导航事件
             this.navItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    const pageId = item.getAttribute('data-page');
-                    this.navigateTo(pageId);
-                });
-            });
-            
-            // 绑定移動端底部导航事件
-            this.mobileNavItems.forEach(item => {
                 item.addEventListener('click', () => {
                     const pageId = item.getAttribute('data-page');
                     this.navigateTo(pageId);
@@ -92,17 +82,8 @@ class App {
     navigateTo(pageId) {
         console.log('Navigating to:', pageId);
         
-        // 更新桌面端导航项的活动状态
+        // 更新导航项的活动状态
         this.navItems.forEach(item => {
-            if (item.getAttribute('data-page') === pageId) {
-                item.classList.add('active');
-            } else {
-                item.classList.remove('active');
-            }
-        });
-        
-        // 更新移動端导航项的活动状态
-        this.mobileNavItems.forEach(item => {
             if (item.getAttribute('data-page') === pageId) {
                 item.classList.add('active');
             } else {
@@ -114,39 +95,6 @@ class App {
         this.pageElements.forEach(page => {
             if (page.id === `${pageId}-page`) {
                 page.classList.add('active');
-                
-                // 在顯示頁面後調整日期選擇器
-                setTimeout(() => {
-                    console.log('Updating date selectors for page:', pageId);
-                    
-                    // 檢查是否為移動端並正確應用樣式
-                    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-                    if (isMobile) {
-                        if (pageId === 'product-comparison' && this.pages['product-comparison']) {
-                            console.log('Applying mobile styles to product comparison page');
-                            this.pages['product-comparison'].applyMobileStyles();
-                        } else if (pageId === 'overview' && this.pages['overview']) {
-                            console.log('Applying mobile styles to overview page');
-                            this.pages['overview'].applyMobileStyles();
-                        }
-                    }
-                    
-                    handleResponsiveDisplay(); // 確保在頁面切換時應用正確的佈局
-                }, 50);
-                
-                // 使用多個延遲確保在各種情況下樣式都能正確應用
-                if (pageId === 'product-comparison' && this.pages['product-comparison']) {
-                    const delays = [100, 300, 600, 1000];
-                    delays.forEach(delay => {
-                        setTimeout(() => {
-                            const isMobile = window.matchMedia("(max-width: 768px)").matches;
-                            if (isMobile) {
-                                console.log(`Reapplying product comparison mobile styles (${delay}ms)`);
-                                this.pages['product-comparison'].applyMobileStyles();
-                            }
-                        }, delay);
-                    });
-                }
             } else {
                 page.classList.remove('active');
             }
@@ -158,44 +106,71 @@ class App {
 console.log('Creating app instance...');
 window.app = new App();
 
-// 處理移動端和PC端的顯示差異
-function handleResponsiveDisplay() {
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    console.log('Device is mobile:', isMobile);
-    
-    // 獲取所有日期選擇器
-    const dateSelectors = document.querySelectorAll('.date-selector');
-    console.log('Found date selectors:', dateSelectors.length);
-    
-    // 不在頁面加載時對日期選擇器進行處理，避免與OverviewPage和ProductComparisonPage中的初始化衝突
-    // 這個函數將只在必要時通過window.handleResponsiveDisplay()手動調用
-    
-    // 確保所有js函數都能訪問到這個函數
-    window.handleResponsiveDisplay = handleResponsiveDisplay;
-}
-
-// 移除這些自動載入時的事件監聽器，避免與頁面自身的初始化衝突
-// 確保頁面載入和窗口大小變化時都調用
-// 不需要再監聽load和resize事件，因為已經由overview.js和productComparison.js處理
-/* 
-window.addEventListener('load', function() {
-    console.log('Window loaded, applying responsive display');
-    handleResponsiveDisplay();
-    
-    // 額外調整：修復初始化時可能的布局問題
-    setTimeout(handleResponsiveDisplay, 500);
-});
-
-window.addEventListener('resize', function() {
-    console.log('Window resized, applying responsive display');
-    handleResponsiveDisplay();
-});
-*/
-
-// 移除舊的處理函數
+// 在頁面加載完成後執行
 document.addEventListener('DOMContentLoaded', function() {
-    // 移除舊處理函數
-    window.adjustDateSelectorForMobile = function() {
-        handleResponsiveDisplay();
-    };
+    // 延遲執行確保 DOM 已加載
+    setTimeout(function() {
+        // 調整日期選擇器結構
+        function adjustDateSelectorForMobile() {
+            console.log('Adjusting date selector for mobile');
+            const dateSelectors = document.querySelectorAll('.date-selector');
+            
+            dateSelectors.forEach(selector => {
+                // 檢查是否已經調整過
+                if (selector.querySelector('.date-inputs-container')) {
+                    return;
+                }
+                
+                const inputs = selector.querySelectorAll('input[type="text"]');
+                if (inputs.length < 2) {
+                    console.log('Not enough inputs found');
+                    return;
+                }
+                
+                const separator = selector.querySelector('.date-separator');
+                const button = selector.querySelector('button');
+                
+                if (!separator || !button) {
+                    console.log('Missing separator or button');
+                    return;
+                }
+                
+                // 創建一個容器用於水平排列日期輸入框
+                const dateInputsContainer = document.createElement('div');
+                dateInputsContainer.className = 'date-inputs-container';
+                
+                // 清空選擇器內容
+                const startDateInput = inputs[0];
+                const endDateInput = inputs[1];
+                
+                // 從原DOM中移除元素
+                startDateInput.parentNode.removeChild(startDateInput);
+                separator.parentNode.removeChild(separator);
+                endDateInput.parentNode.removeChild(endDateInput);
+                button.parentNode.removeChild(button);
+                
+                // 將日期輸入元素添加到容器中
+                dateInputsContainer.appendChild(startDateInput);
+                dateInputsContainer.appendChild(separator);
+                dateInputsContainer.appendChild(endDateInput);
+                
+                // 將容器和按鈕添加到選擇器中
+                selector.appendChild(dateInputsContainer);
+                selector.appendChild(button);
+                
+                console.log('Date selector restructured successfully');
+            });
+        }
+        
+        // 執行調整
+        adjustDateSelectorForMobile();
+        
+        // 當窗口大小變化時重新調整
+        window.addEventListener('resize', function() {
+            // 只在移動端視圖調整結構
+            if (window.innerWidth <= 768) {
+                adjustDateSelectorForMobile();
+            }
+        });
+    }, 300);
 }); 

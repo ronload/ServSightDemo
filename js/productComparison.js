@@ -18,12 +18,11 @@ class ProductComparisonPage {
         // 創建並添加商品選擇彈窗
         this.createProductSelectorModal();
         
-        // 設置默認日期為最近30天
+        // 設置默認日期
         const today = new Date();
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(today.getDate() - 30);
+        const defaultStartDate = new Date(2025, 1, 1); // 2025/02/01
         
-        this.startDateInput.value = this.formatDate(thirtyDaysAgo);
+        this.startDateInput.value = this.formatDate(defaultStartDate);
         this.endDateInput.value = this.formatDate(today);
         
         this.init();
@@ -108,7 +107,40 @@ class ProductComparisonPage {
             console.log('Initializing ProductComparisonPage...');
             
             // 初始化日期選擇器
-            this.initializeDatePickers();
+            this.startDatePicker = flatpickr("#product-start-date", {
+                locale: 'zh_tw',
+                dateFormat: "Y-m-d",
+                defaultDate: this.startDateInput.value,
+                maxDate: this.endDateInput.value,
+                disableMobile: false,
+                position: "auto",
+                static: true,
+                inline: false,
+                mode: "single",
+                onChange: (selectedDates, dateStr) => {
+                    if (selectedDates[0]) {
+                        this.endDatePicker.set('minDate', dateStr);
+                    }
+                }
+            });
+
+            this.endDatePicker = flatpickr("#product-end-date", {
+                locale: 'zh_tw',
+                dateFormat: "Y-m-d",
+                defaultDate: this.endDateInput.value,
+                minDate: this.startDateInput.value,
+                maxDate: "today",
+                disableMobile: false,
+                position: "auto",
+                static: true,
+                inline: false,
+                mode: "single",
+                onChange: (selectedDates, dateStr) => {
+                    if (selectedDates[0]) {
+                        this.startDatePicker.set('maxDate', dateStr);
+                    }
+                }
+            });
             
             // 綁定確認按鈕事件
             this.dateConfirmBtn.addEventListener('click', () => {
@@ -116,233 +148,17 @@ class ProductComparisonPage {
                 this.loadData();
             });
         
-            // 加载商品列表
-            await this.loadProductList();
+        // 加载商品列表
+        await this.loadProductList();
+        
+        // 初始加载数据
+        this.loadData();
             
-            // 初始加载数据
-            this.loadData();
-                
             console.log('ProductComparisonPage initialized successfully');
-                
+            
         } catch (error) {
             console.error('Error in ProductComparisonPage init:', error);
             alert('頁面初始化失敗，請查看控制台以獲取詳細信息');
-        }
-    }
-    
-    // 初始化日期选择器
-    initializeDatePickers() {
-        try {
-            console.log('Initializing product comparison date pickers...');
-            
-            // 判斷是否為移動端
-            const isMobile = window.matchMedia("(max-width: 768px)").matches;
-            console.log('Initializing date pickers for:', isMobile ? 'mobile' : 'desktop');
-            
-            // 先應用樣式，確保在flatpickr初始化前就有正確的樣式
-            if (isMobile) {
-                this.applyMobileStyles();
-            }
-            
-            // 如果已經有實例，先銷毀它們
-            if (this.startDatePicker) {
-                this.startDatePicker.destroy();
-            }
-            if (this.endDatePicker) {
-                this.endDatePicker.destroy();
-            }
-            
-            // 共通配置
-            const commonConfig = {
-                locale: 'zh_tw',
-                dateFormat: "Y-m-d",
-                maxDate: "today",
-                disableMobile: true, // 禁用原生移動端日期選擇器
-                allowInput: true,
-                clickOpens: true,
-                mode: "single"
-            };
-            
-            // 重新初始化日期選擇器
-            this.startDatePicker = flatpickr("#product-start-date", {
-                ...commonConfig,
-                defaultDate: this.startDateInput.value || (() => {
-                    const thirtyDaysAgo = new Date();
-                    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-                    return thirtyDaysAgo;
-                })(),
-                position: "auto",
-                onChange: (selectedDates, dateStr) => {
-                    if (selectedDates[0]) {
-                        this.endDatePicker.set('minDate', dateStr);
-                    }
-                    
-                    // 防止樣式被覆蓋，但使用節流方式避免過多調用
-                    if (isMobile) {
-                        if (this._stylesTimeout) clearTimeout(this._stylesTimeout);
-                        this._stylesTimeout = setTimeout(() => this.applyMobileStyles(), 50);
-                    }
-                }
-            });
-            
-            this.endDatePicker = flatpickr("#product-end-date", {
-                ...commonConfig,
-                defaultDate: this.endDateInput.value || new Date(),
-                position: "auto",
-                onChange: (selectedDates, dateStr) => {
-                    if (selectedDates[0]) {
-                        this.startDatePicker.set('maxDate', dateStr);
-                    }
-                    
-                    // 防止樣式被覆蓋，但使用節流方式避免過多調用
-                    if (isMobile) {
-                        if (this._stylesTimeout) clearTimeout(this._stylesTimeout);
-                        this._stylesTimeout = setTimeout(() => this.applyMobileStyles(), 50);
-                    }
-                }
-            });
-            
-            // 移動端立即應用自定義樣式，確保樣式正確應用
-            if (isMobile) {
-                // 使用多個延遲確保樣式能被正確應用
-                setTimeout(() => this.applyMobileStyles(), 0);
-                setTimeout(() => this.applyMobileStyles(), 100);
-                setTimeout(() => this.applyMobileStyles(), 300);
-            }
-            
-            console.log('Product comparison date pickers initialized successfully');
-        } catch (error) {
-            console.error('Error initializing product comparison date pickers:', error);
-        }
-    }
-    
-    // 應用移動端樣式
-    applyMobileStyles() {
-        const isMobile = window.matchMedia("(max-width: 768px)").matches;
-        if (!isMobile) return;
-        
-        console.log('Applying mobile styles to product date inputs');
-        
-        // 獲取輸入框
-        const startInput = document.getElementById('product-start-date');
-        const endInput = document.getElementById('product-end-date');
-        
-        if (startInput && endInput) {
-            // 修改日期選擇器父容器樣式，確保水平佈局
-            const dateSelector = startInput.closest('.date-selector');
-            if (dateSelector) {
-                dateSelector.style.display = 'block';
-                dateSelector.style.width = '100%';
-                
-                // 保存當前的值
-                const startValue = startInput.value;
-                const endValue = endInput.value;
-                
-                // 移除現有輸入框和分隔符
-                const existingContainer = dateSelector.querySelector('.date-inputs-container');
-                if (existingContainer) {
-                    existingContainer.remove();
-                }
-                
-                const separator = dateSelector.querySelector('.date-separator');
-                if (separator && !separator.closest('.date-inputs-container')) {
-                    separator.remove();
-                }
-                
-                startInput.remove();
-                endInput.remove();
-                
-                // 創建新的容器
-                const inputContainer = document.createElement('div');
-                inputContainer.className = 'date-inputs-container';
-                
-                // 設置容器樣式 - 強制水平佈局
-                inputContainer.style.display = 'flex';
-                inputContainer.style.alignItems = 'center';
-                inputContainer.style.justifyContent = 'space-between';
-                inputContainer.style.width = '100%';
-                inputContainer.style.marginBottom = '10px';
-                
-                // 添加新的水平佈局
-                inputContainer.innerHTML = `
-                    <input type="text" id="product-start-date" value="${startValue}" placeholder="開始日期">
-                    <span class="date-separator">至</span>
-                    <input type="text" id="product-end-date" value="${endValue}" placeholder="結束日期">
-                `;
-                
-                // 將容器添加到選擇器中（在按鈕之前）
-                const button = dateSelector.querySelector('button');
-                if (button) {
-                    dateSelector.insertBefore(inputContainer, button);
-                } else {
-                    dateSelector.appendChild(inputContainer);
-                }
-                
-                // 重新獲取輸入框
-                const newStartInput = document.getElementById('product-start-date');
-                const newEndInput = document.getElementById('product-end-date');
-                const newSeparator = dateSelector.querySelector('.date-inputs-container .date-separator');
-                
-                // 應用輸入框樣式
-                const inputStyle = 'width:44%; height:54px; font-size:16px; text-align:center; border-radius:12px; ' +
-                    'border:1px solid #333; background:#0a0a0a; color:#fff; padding:0; margin:0; ' +
-                    '-webkit-appearance:none; box-sizing:border-box;';
-                    
-                newStartInput.setAttribute('style', inputStyle);
-                newEndInput.setAttribute('style', inputStyle);
-                
-                if (newSeparator) {
-                    newSeparator.style.display = 'inline-block';
-                    newSeparator.style.width = '10%';
-                    newSeparator.style.textAlign = 'center';
-                    newSeparator.style.color = '#a0a0a0';
-                    newSeparator.style.fontSize = '16px';
-                }
-                
-                // 確認按鈕樣式
-                const confirmBtn = document.getElementById('product-date-confirm');
-                if (confirmBtn) {
-                    const btnStyle = 'display:block; width:100%; height:54px; line-height:54px; font-size:18px; ' +
-                        'font-weight:500; background-color:#ededed; color:#000; border:none; border-radius:12px; ' +
-                        '-webkit-appearance:none; margin:10px auto 0;';
-                        
-                    confirmBtn.setAttribute('style', btnStyle);
-                }
-                
-                // 必須重新初始化日期選擇器
-                if (this.startDatePicker) {
-                    this.startDatePicker.destroy();
-                    this.startDatePicker = flatpickr("#product-start-date", {
-                        locale: 'zh_tw',
-                        dateFormat: "Y-m-d",
-                        maxDate: this.endDateInput.value || "today",
-                        disableMobile: true,
-                        defaultDate: startValue || (() => {
-                            const thirtyDaysAgo = new Date();
-                            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-                            return thirtyDaysAgo;
-                        })(),
-                        allowInput: true,
-                        clickOpens: true
-                    });
-                }
-                
-                if (this.endDatePicker) {
-                    this.endDatePicker.destroy();
-                    this.endDatePicker = flatpickr("#product-end-date", {
-                        locale: 'zh_tw',
-                        dateFormat: "Y-m-d",
-                        minDate: this.startDateInput.value || null,
-                        maxDate: "today",
-                        disableMobile: true,
-                        defaultDate: endValue || new Date(),
-                        allowInput: true,
-                        clickOpens: true
-                    });
-                }
-            }
-            
-            console.log('Mobile styles applied: horizontal layout for product comparison page');
         }
     }
     
@@ -485,8 +301,8 @@ class ProductComparisonPage {
         selectAllButton.textContent = '全選';
         selectAllButton.className = 'selection-button';
         selectAllButton.style.padding = '5px 10px';
-        selectAllButton.style.backgroundColor = '#ededed';
-        selectAllButton.style.color = '#000000';
+        selectAllButton.style.backgroundColor = '#3498db';
+        selectAllButton.style.color = 'white';
         selectAllButton.style.border = 'none';
         selectAllButton.style.borderRadius = '4px';
         selectAllButton.style.cursor = 'pointer';
@@ -495,8 +311,8 @@ class ProductComparisonPage {
         deselectAllButton.textContent = '取消全選';
         deselectAllButton.className = 'selection-button';
         deselectAllButton.style.padding = '5px 10px';
-        deselectAllButton.style.backgroundColor = '#ededed';
-        deselectAllButton.style.color = '#000000';
+        deselectAllButton.style.backgroundColor = '#e74c3c';
+        deselectAllButton.style.color = 'white';
         deselectAllButton.style.border = 'none';
         deselectAllButton.style.borderRadius = '4px';
         deselectAllButton.style.cursor = 'pointer';
@@ -872,8 +688,7 @@ class ProductComparisonPage {
                     data: data,
                     borderColor: color,
                     backgroundColor: color,
-                    fill: false,
-                    borderWidth: 1.5,
+                fill: false,
                     tension: 0.4,
                     yAxisID: isStudentNoodle ? 'quantity' : 'sales'
                 };

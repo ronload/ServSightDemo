@@ -251,13 +251,7 @@ class DataLoader {
             // 生成可能的文件名列表
             const csvFiles = [];
             const endDate = new Date();
-            
-            // 設置開始日期為較早的日期：90天前或2025-02-01（以確保不會漏掉數據）
-            const ninetyDaysAgo = new Date();
-            ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
-            
-            const hardcodedStartDate = new Date(2025, 1, 1); // 2025-02-01
-            const startDate = ninetyDaysAgo < hardcodedStartDate ? ninetyDaysAgo : hardcodedStartDate;
+            const startDate = new Date(2025, 1, 1); // 从2025-02-01开始
             
             console.log('Generating file list from', startDate, 'to', endDate);
             

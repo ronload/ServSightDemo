@@ -1,5 +1,4 @@
 /**
-/**
  * 总览页面
  * 显示销售趋势、销售额排行和分类占比
  */
@@ -57,16 +56,35 @@ class OverviewPage {
             
             console.log('All required elements found');
             
-            // 先初始化页面，設置默認日期值
+            // 初始化日期選擇器
+            this.startDatePicker = flatpickr("#start-date", {
+                locale: 'zh_tw',
+                dateFormat: "Y-m-d",
+                defaultDate: "2025-02-01",
+                maxDate: "today",
+                disableMobile: true,
+                onChange: (selectedDates, dateStr) => {
+                    if (selectedDates[0]) {
+                        this.endDatePicker.set('minDate', dateStr);
+                    }
+                }
+            });
+
+            this.endDatePicker = flatpickr("#end-date", {
+                locale: 'zh_tw',
+                dateFormat: "Y-m-d",
+                defaultDate: new Date(),
+                maxDate: "today",
+                disableMobile: true,
+                onChange: (selectedDates, dateStr) => {
+                    if (selectedDates[0]) {
+                        this.startDatePicker.set('maxDate', dateStr);
+                    }
+                }
+            });
+            
+            // 初始化頁面
             this.init();
-            
-            // 然後初始化日期選擇器
-            this.initializeDatePickers();
-            
-            // 最後加載數據
-            console.log('Loading initial data...');
-            setTimeout(() => this.loadData(), 100);
-            
             console.log('OverviewPage initialized successfully');
             
         } catch (error) {
@@ -103,8 +121,8 @@ class OverviewPage {
             
             console.log('Page initialized successfully');
             
-            // 初始加載數據將在日期選擇器初始化後進行
-            // 這樣可以確保日期選擇器更新後的值被正確使用
+            // 初始加載數據
+            this.loadData();
             
         } catch (error) {
             console.error('Error in init:', error);
@@ -220,7 +238,7 @@ class OverviewPage {
     }
     
     // 更新销售趋势折线图
-    async updateSalesTrendChart(data) {
+    updateSalesTrendChart(data) {
         try {
             console.log('Updating sales trend chart...');
             
@@ -231,10 +249,7 @@ class OverviewPage {
                 return;
             }
             
-            // 檢測是否為移動設備
-            const isMobile = window.innerWidth <= 768;
-            
-            // 按日期分組數據
+            // 按日期分组数据
             const salesByDate = {};
             
             // 首先查找每个日期的"總計"行
@@ -298,202 +313,55 @@ class OverviewPage {
             const totalSales = amounts.reduce((sum, amount) => sum + amount, 0);
             this.totalSalesElement.textContent = `$${formatAmount(totalSales)}`;
             
-            // 創建圖表的選項配置
-            const chartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: false
-                    },
-                    legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            color: '#a0a0a0',
-                            boxWidth: isMobile ? 12 : 40, // 移動端上圖例方塊更小
-                            padding: isMobile ? 8 : 10 // 移動端上圖例間距更小
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: {
-                            color: '#a0a0a0',
-                            callback: function(value, index, values) {
-                                if (isMobile) {
-                                    // 移動端簡化為 MM/DD 格式
-                                    const date = new Date(this.getLabelForValue(value));
-                                    const month = date.getMonth() + 1;
-                                    const day = date.getDate();
-                                    return `${month}/${day}`;
-                                }
-                                return this.getLabelForValue(value);
-                            },
-                            maxRotation: 0, // 避免標籤旋轉
-                            autoSkip: true, // 自動跳過標籤
-                            autoSkipPadding: isMobile ? 10 : 20 // 移動端標籤間距
-                        },
-                        grid: {
-                            color: 'rgba(160, 160, 160, 0.1)'
-                        },
-                        // 減少x軸兩端的內邊距
-                        afterFit: function(axis) {
-                            if (isMobile) {
-                                axis.paddingLeft = 10;
-                                axis.paddingRight = 0;
-                            }
-                        }
-                    },
-                    y: {
-                        ticks: {
-                            color: '#a0a0a0',
-                            callback: function(value, index, values) {
-                                if (isMobile) {
-                                    // 移動端使用 k 表示千元
-                                    if (value >= 1000) {
-                                        return '$' + (value / 1000) + 'k';
-                                    }
-                                }
-                                return '$' + value;
-                            }
-                        },
-                        grid: {
-                            color: 'rgba(160, 160, 160, 0.1)'
-                        },
-                        beginAtZero: true
-                    }
-                },
-                layout: {
-                    padding: {
-                        left: 5,
-                        right: 0, // 減少右側間距
-                        top: 10,
-                        bottom: 0  // 將底部間距調整為0
-                    }
-                }
-            };
-            
-            // 準備圖表數據
-            const chartData = {
-                labels: dates,
-                datasets: [
-                    {
-                        label: '日營業額',
-                        data: amounts,
-                        borderColor: '#2997ff',
-                        backgroundColor: 'rgba(41, 151, 255, 0.1)',
-                        fill: false,
-                        borderWidth: 1,   // 確保與初始創建時的粗細相同
-                        tension: 0.4,
-                        pointRadius: isMobile ? 2 : 3,
-                        pointHoverRadius: isMobile ? 4 : 5
-                    }
-                ]
-            };
-            
-            // 只在非移動設備上添加三日平均線
-            if (!isMobile) {
-                chartData.datasets.push({
-                    label: '三日平均',
-                    data: movingAverages,
-                    borderColor: 'rgba(116, 201, 255, 0.7)',
-                    backgroundColor: 'rgba(116, 201, 255, 0.1)',
-                    fill: false,
-                    borderWidth: 1.5,
-                    tension: 0.4,
-                    pointRadius: 0
-                });
-            }
-            
-            // 創建或更新圖表
+            // 创建或更新图表
             const ctx = chartContainer.getContext('2d');
             
             if (this.salesTrendChart) {
-                // 更新现有图表
                 this.salesTrendChart.data.labels = dates;
-                this.salesTrendChart.data.datasets = [
-                    {
-                        label: '日營業額',
-                        data: amounts,
-                        borderColor: '#2997ff',
-                        backgroundColor: 'rgba(41, 151, 255, 0.1)',
-                        fill: false,
-                        borderWidth: 1,   // 確保與初始創建時的粗細相同
-                        tension: 0.4,
-                        pointRadius: isMobile ? 2 : 3,
-                        pointHoverRadius: isMobile ? 4 : 5
-                    }
-                ];
-                
-                // 只在非移動設備上添加三日平均線
-                if (!isMobile) {
-                    this.salesTrendChart.data.datasets.push({
-                        label: '三日平均',
-                        data: movingAverages,
-                        borderColor: 'rgba(116, 201, 255, 0.7)',
-                        backgroundColor: 'rgba(116, 201, 255, 0.1)',
-                        fill: false,
-                        borderWidth: 1.5,
-                        tension: 0.4,
-                        pointRadius: 0
-                    });
-                }
-
-                // 添加$20000水平線
-                this.salesTrendChart.data.datasets.push({
-                    label: '$20000',
-                    data: twentyThousandLine,
-                    borderColor: 'rgba(255, 0, 0, 0.5)',
-                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
+                this.salesTrendChart.data.datasets = [{
+                    label: '日營業額',
+                    data: amounts,
+                    borderColor: '#2997ff',
+                    backgroundColor: '#2997ff',
+                    fill: false,
+                    tension: 0.4,
+                    borderWidth: 2
+                }, {
+                    label: '三日平均',
+                    data: movingAverages,
+                    borderColor: 'rgba(41, 151, 255, 0.5)',
+                    backgroundColor: 'rgba(41, 151, 255, 0.5)',
                     fill: false,
                     borderWidth: 1.5,
                     tension: 0.4,
                     pointRadius: 0
-                });
-                
-                // 更新圖表選項
-                this.salesTrendChart.options.scales.x.ticks.callback = function(value, index, values) {
-                    if (isMobile) {
-                        // 移動端簡化為 MM/DD 格式
-                        const date = new Date(this.getLabelForValue(value));
-                        const month = date.getMonth() + 1;
-                        const day = date.getDate();
-                        return `${month}/${day}`;
-                    }
-                    return this.getLabelForValue(value);
-                };
-                
-                this.salesTrendChart.options.scales.y.ticks.callback = function(value, index, values) {
-                    if (isMobile) {
-                        // 移動端使用 k 表示千元
-                        if (value >= 1000) {
-                            return '$' + (value / 1000) + 'k';
-                        }
-                    }
-                    return '$' + value;
-                };
-                
+                }];
                 this.salesTrendChart.update();
+                console.log('Sales trend chart updated');
             } else {
-                // 创建新图表
+                console.log('Creating new sales trend chart');
                 this.salesTrendChart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: dates,
-                        datasets: [
-                            {
-                                label: '日營業額',
-                                data: amounts,
-                                borderColor: '#2997ff',
-                                backgroundColor: 'rgba(41, 151, 255, 0.1)',
-                                fill: false,
-                                borderWidth: 1,   // 確保與初始創建時的粗細相同
-                                tension: 0.4,
-                                pointRadius: isMobile ? 2 : 3,
-                                pointHoverRadius: isMobile ? 4 : 5
-                            }
-                        ]
+                        datasets: [{
+                            label: '日營業額',
+                            data: amounts,
+                            borderColor: '#2997ff',
+                            backgroundColor: '#2997ff',
+                            fill: false,
+                            tension: 0.4,
+                            borderWidth: 2
+                        }, {
+                            label: '三日平均',
+                            data: movingAverages,
+                            borderColor: 'rgba(41, 151, 255, 0.5)',
+                            backgroundColor: 'rgba(41, 151, 255, 0.5)',
+                            fill: false,
+                            borderWidth: 1.5,
+                            tension: 0.4,
+                            pointRadius: 0
+                        }]
                     },
                     options: {
                         responsive: true,
@@ -506,102 +374,51 @@ class OverviewPage {
                                 display: true,
                                 position: 'top',
                                 labels: {
-                                    color: '#a0a0a0',
-                                    boxWidth: isMobile ? 12 : 40, // 移動端上圖例方塊更小
-                                    padding: isMobile ? 8 : 10 // 移動端上圖例間距更小
+                                    color: '#a0a0a0'
                                 }
                             }
+                        },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
                         },
                         scales: {
                             x: {
-                                ticks: {
-                                    color: '#a0a0a0',
-                                    callback: function(value, index, values) {
-                                        if (isMobile) {
-                                            // 移動端簡化為 MM/DD 格式
-                                            const date = new Date(this.getLabelForValue(value));
-                                            const month = date.getMonth() + 1;
-                                            const day = date.getDate();
-                                            return `${month}/${day}`;
-                                        }
-                                        return this.getLabelForValue(value);
-                                    },
-                                    maxRotation: 0, // 避免標籤旋轉
-                                    autoSkip: true, // 自動跳過標籤
-                                    autoSkipPadding: isMobile ? 10 : 20 // 移動端標籤間距
+                                type: 'time',
+                                time: {
+                                    parser: 'YYYY/MM/DD',
+                                    tooltipFormat: 'YYYY/MM/DD',
+                                    unit: 'day'
                                 },
                                 grid: {
-                                    color: 'rgba(160, 160, 160, 0.1)'
+                                    color: 'rgba(255, 255, 255, 0.1)',
+                                    drawBorder: false
                                 },
-                                // 減少x軸兩端的內邊距
-                                afterFit: function(axis) {
-                                    if (isMobile) {
-                                        axis.paddingLeft = 10;
-                                        axis.paddingRight = 0;
-                                    }
+                                ticks: {
+                                    color: '#a0a0a0'
                                 }
                             },
                             y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)',
+                                    drawBorder: false
+                                },
                                 ticks: {
                                     color: '#a0a0a0',
-                                    callback: function(value, index, values) {
-                                        if (isMobile) {
-                                            // 移動端使用 k 表示千元
-                                            if (value >= 1000) {
-                                                return '$' + (value / 1000) + 'k';
-                                            }
-                                        }
-                                        return '$' + value;
+                                    callback: function(value) {
+                                        return new Intl.NumberFormat('zh-TW', {
+                                            style: 'currency',
+                                            currency: 'TWD',
+                                            minimumFractionDigits: 0
+                                        }).format(value);
                                     }
-                                },
-                                grid: {
-                                    color: 'rgba(160, 160, 160, 0.1)'
-                                },
-                                beginAtZero: true
-                            }
-                        },
-                        layout: {
-                            padding: {
-                                left: 5,
-                                right: 0, // 減少右側間距
-                                top: 10,
-                                bottom: 0  // 將底部間距調整為0
+                                }
                             }
                         }
                     }
                 });
-                
-                // 只在非移動設備上添加三日平均線
-                if (!isMobile) {
-                    this.salesTrendChart.data.datasets.push({
-                        label: '三日平均',
-                        data: movingAverages,
-                        borderColor: 'rgba(116, 201, 255, 0.7)',
-                        backgroundColor: 'rgba(116, 201, 255, 0.1)',
-                        fill: false,
-                        borderWidth: 1.5,
-                        tension: 0.4,
-                        pointRadius: 0
-                    });
-                }
-                
-                // 添加水平線
-                this.salesTrendChart.data.datasets.push({
-                    label: '$20000',
-                    data: twentyThousandLine,
-                    borderColor: 'rgba(255, 0, 0, 0.5)',
-                    backgroundColor: 'rgba(255, 0, 0, 0.5)',
-                    fill: false,
-                    borderWidth: 1.5,
-                    tension: 0.4,
-                    pointRadius: 0
-                });
-                
-                this.salesTrendChart.update();
             }
-            
-            console.log('Sales trend chart updated successfully');
-            
         } catch (error) {
             console.error('Error updating sales trend chart:', error);
         }
@@ -1095,6 +912,28 @@ class OverviewPage {
                                         return `平均營業額: $${formatAmount(context.raw)}`;
                                     }
                                 }
+                            },
+                            annotation: {
+                                annotations: {
+                                    twentyThousandLine: {
+                                        type: 'line',
+                                        yMin: 20000,
+                                        yMax: 20000,
+                                        borderColor: 'rgb(255, 0, 0)',
+                                        borderWidth: 2,
+                                        borderDash: [5, 5],
+                                        label: {
+                                            display: true,
+                                            content: '$20,000',
+                                            position: 'end',
+                                            backgroundColor: 'rgba(255, 0, 0, 0.8)',
+                                            color: 'white',
+                                            font: {
+                                                weight: 'bold'
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         },
                         scales: {
@@ -1112,16 +951,6 @@ class OverviewPage {
                                     const maxValue = Math.max(...allData);
                                     return maxValue * 1.2;
                                 },
-                            },
-                            x: {
-                                ticks: {
-                                    color: '#a0a0a0',
-                                    maxRotation: 0,  // 避免標籤旋轉
-                                    autoSkip: false  // 強制顯示所有標籤
-                                },
-                                grid: {
-                                    color: 'rgba(160, 160, 160, 0.1)'
-                                }
                             }
                         }
                     }
@@ -1132,344 +961,6 @@ class OverviewPage {
             
         } catch (error) {
             console.error('Error updating weekday average sales chart:', error);
-        }
-    }
-
-    // 更新週間平均營業額圖表
-    updateWeekdayAverageChart(data) {
-        try {
-            console.log('Updating weekday average chart...');
-            const weekdays = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
-            
-            if (!data || !data.dailyData || data.dailyData.length === 0) {
-                console.log('No data for weekday chart');
-                return;
-            }
-            
-            // 檢測是否為移動設備
-            const isMobile = window.innerWidth <= 768;
-            
-            // 將資料按星期幾分組
-            const salesByWeekday = {};
-            const countByWeekday = {};
-            
-            weekdays.forEach(day => {
-                salesByWeekday[day] = 0;
-                countByWeekday[day] = 0;
-            });
-            
-            data.dailyData.forEach(day => {
-                const date = new Date(day.date.replace(/(\d{4})\/(\d{2})\/(\d{2})/, '$1-$2-$3'));
-                const weekdayIndex = date.getDay();
-                const weekday = weekdays[weekdayIndex];
-                
-                salesByWeekday[weekday] += day.totalSales;
-                countByWeekday[weekday]++;
-            });
-            
-            // 計算每個星期幾的平均銷售額
-            const avgSalesByWeekday = {};
-            weekdays.forEach(day => {
-                if (countByWeekday[day] > 0) {
-                    avgSalesByWeekday[day] = salesByWeekday[day] / countByWeekday[day];
-                } else {
-                    avgSalesByWeekday[day] = 0;
-                }
-            });
-            
-            // 轉換成圖表資料
-            const chartData = {
-                labels: weekdays,
-                datasets: [{
-                    label: '平均營業額',
-                    data: weekdays.map(day => avgSalesByWeekday[day]),
-                    backgroundColor: function(context) {
-                        const index = context.dataIndex;
-                        const value = context.dataset.data[index];
-                        return value > 20000 ? 'rgba(255, 0, 0, 0.7)' : 'rgba(41, 151, 255, 0.7)';
-                    },
-                    borderColor: function(context) {
-                        const index = context.dataIndex;
-                        const value = context.dataset.data[index];
-                        return value > 20000 ? 'rgba(255, 0, 0, 1)' : 'rgba(41, 151, 255, 1)';
-                    },
-                    borderWidth: 1
-                }]
-            };
-            
-            // 更新或創建圖表
-            const chartOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    title: {
-                        display: false
-                    },
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            color: '#a0a0a0',
-                            callback: function(value, index, values) {
-                                if (isMobile) {
-                                    // 移動端使用 k 表示千元
-                                    if (value >= 1000) {
-                                        return '$' + (value / 1000) + 'k';
-                                    }
-                                }
-                                return '$' + value;
-                            }
-                        },
-                        grid: {
-                            color: 'rgba(160, 160, 160, 0.1)'
-                        }
-                    },
-                    x: {
-                        ticks: {
-                            color: '#a0a0a0',
-                            maxRotation: 0  // 避免標籤旋轉
-                        },
-                        grid: {
-                            color: 'rgba(160, 160, 160, 0.1)'
-                        }
-                    }
-                }
-            };
-            
-            if (this.weekdayAvgChart) {
-                this.weekdayAvgChart.data = chartData;
-                this.weekdayAvgChart.options = chartOptions;
-                this.weekdayAvgChart.update();
-            } else {
-                this.weekdayAvgChart = new Chart(
-                    document.getElementById('weekday-avg-chart').getContext('2d'), {
-                        type: 'bar',
-                        data: chartData,
-                        options: chartOptions
-                    }
-                );
-            }
-            
-            console.log('Weekday average chart updated successfully');
-        } catch (error) {
-            console.error('Error updating weekday average chart:', error);
-        }
-    }
-
-    // 初始化或重新初始化日期選擇器
-    initializeDatePickers() {
-        try {
-            console.log('Initializing date pickers...');
-            
-            // 判斷是否為移動端
-            const isMobile = window.matchMedia("(max-width: 768px)").matches;
-            console.log('Initializing date pickers for:', isMobile ? 'mobile' : 'desktop');
-            
-            // 確保日期輸入框有默認值
-            if (!this.startDateInput.value) {
-                const thirtyDaysAgo = new Date();
-                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-                const minDate = new Date(2025, 1, 1);
-                const defaultStartDate = thirtyDaysAgo < minDate ? minDate : thirtyDaysAgo;
-                this.startDateInput.value = formatDateForInput(defaultStartDate);
-            }
-            
-            if (!this.endDateInput.value) {
-                this.endDateInput.value = formatDateForInput(new Date());
-            }
-            
-            console.log('Date input values:', {
-                start: this.startDateInput.value,
-                end: this.endDateInput.value
-            });
-            
-            // 先應用樣式，確保在flatpickr初始化前就有正確的樣式
-            if (isMobile) {
-                this.applyMobileStyles();
-            }
-            
-            // 如果已有實例，先銷毀它們
-            if (this.startDatePicker) {
-                this.startDatePicker.destroy();
-            }
-            if (this.endDatePicker) {
-                this.endDatePicker.destroy();
-            }
-            
-            // flatpickr 配置
-            const commonConfig = {
-                locale: 'zh_tw',
-                dateFormat: "Y-m-d",
-                maxDate: "today",
-                disableMobile: true, // 禁用原生移動端日期選擇器
-                allowInput: true,
-                clickOpens: true,
-                mode: "single"
-            };
-            
-            // 計算默認日期
-            const defaultStartDate = (() => {
-                if (this.startDateInput.value) return this.startDateInput.value;
-                const thirtyDaysAgo = new Date();
-                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-                return thirtyDaysAgo;
-            })();
-            
-            const defaultEndDate = this.endDateInput.value || new Date();
-            
-            // 重新初始化日期選擇器
-            this.startDatePicker = flatpickr("#start-date", {
-                ...commonConfig,
-                defaultDate: defaultStartDate,
-                position: "auto",
-                onChange: (selectedDates, dateStr) => {
-                    if (selectedDates[0]) {
-                        this.endDatePicker.set('minDate', dateStr);
-                    }
-                    
-                    // 防止樣式被覆蓋，但使用節流方式避免過多調用
-                    if (isMobile) {
-                        if (this._stylesTimeout) clearTimeout(this._stylesTimeout);
-                        this._stylesTimeout = setTimeout(() => this.applyMobileStyles(), 50);
-                    }
-                }
-            });
-
-            this.endDatePicker = flatpickr("#end-date", {
-                ...commonConfig,
-                defaultDate: defaultEndDate,
-                position: "auto",
-                onChange: (selectedDates, dateStr) => {
-                    if (selectedDates[0]) {
-                        this.startDatePicker.set('maxDate', dateStr);
-                    }
-                    
-                    // 防止樣式被覆蓋，但使用節流方式避免過多調用
-                    if (isMobile) {
-                        if (this._stylesTimeout) clearTimeout(this._stylesTimeout);
-                        this._stylesTimeout = setTimeout(() => this.applyMobileStyles(), 50);
-                    }
-                }
-            });
-            
-            // 移動端再次應用自定義樣式，使用多個延遲確保樣式能被正確應用
-            if (isMobile) {
-                setTimeout(() => this.applyMobileStyles(), 0);
-                setTimeout(() => this.applyMobileStyles(), 100);
-                setTimeout(() => this.applyMobileStyles(), 300);
-            }
-            
-            console.log('Date pickers initialized successfully');
-        } catch (error) {
-            console.error('Error initializing date pickers:', error);
-        }
-    }
-    
-    // 應用移動端樣式
-    applyMobileStyles() {
-        const isMobile = window.matchMedia("(max-width: 768px)").matches;
-        if (!isMobile) return;
-        
-        console.log('Applying mobile styles to date inputs');
-        
-        // 獲取輸入框
-        const startInput = document.getElementById('start-date');
-        const endInput = document.getElementById('end-date');
-        
-        if (startInput && endInput) {
-            // 修改日期選擇器父容器樣式，確保水平佈局
-            const dateSelector = startInput.closest('.date-selector');
-            if (dateSelector) {
-                dateSelector.style.display = 'block';
-                dateSelector.style.width = '100%';
-            }
-            
-            // 確保兩個輸入框都有值
-            const startValue = startInput.value || formatDateForInput((() => {
-                const thirtyDaysAgo = new Date();
-                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-                const minDate = new Date(2025, 1, 1);
-                return thirtyDaysAgo < minDate ? minDate : thirtyDaysAgo;
-            })());
-            
-            const endValue = endInput.value || formatDateForInput(new Date());
-            
-            console.log('Input values for mobile styling:', { startValue, endValue });
-            
-            // 創建或獲取輸入框容器
-            let inputContainer = document.querySelector('.date-selector .date-inputs-container');
-            if (!inputContainer) {
-                inputContainer = document.createElement('div');
-                inputContainer.className = 'date-inputs-container';
-                
-                // 將開始日期、分隔符和結束日期移到容器中
-                const separator = document.querySelector('.date-selector .date-separator');
-                if (separator) {
-                    separator.remove();
-                }
-                
-                // 移除現有輸入框
-                startInput.remove();
-                endInput.remove();
-                
-                // 添加新的水平佈局
-                inputContainer.innerHTML = `
-                    <input type="text" id="start-date" value="${startValue}" placeholder="開始日期">
-                    <span class="date-separator">至</span>
-                    <input type="text" id="end-date" value="${endValue}" placeholder="結束日期">
-                `;
-                
-                // 將容器添加到選擇器中
-                const button = document.querySelector('.date-selector button');
-                if (button) {
-                    dateSelector.insertBefore(inputContainer, button);
-                } else {
-                    dateSelector.appendChild(inputContainer);
-                }
-            }
-            
-            // 重新獲取輸入框
-            const newStartInput = document.getElementById('start-date');
-            const newEndInput = document.getElementById('end-date');
-            const separator = document.querySelector('.date-selector .date-separator');
-            
-            // 應用更合適的中等尺寸樣式
-            inputContainer.style.display = 'flex';
-            inputContainer.style.alignItems = 'center';
-            inputContainer.style.justifyContent = 'space-between';
-            inputContainer.style.width = '100%';
-            inputContainer.style.marginBottom = '10px';
-            
-            const inputStyle = 'width:44%; height:54px; font-size:16px; text-align:center; border-radius:12px; ' +
-                'border:1px solid #333; background:#0a0a0a; color:#fff; padding:0; margin:0; ' +
-                '-webkit-appearance:none; box-sizing:border-box;';
-                
-            newStartInput.setAttribute('style', inputStyle);
-            newEndInput.setAttribute('style', inputStyle);
-            
-            if (separator) {
-                separator.style.display = 'inline-block';
-                separator.style.width = '10%';
-                separator.style.textAlign = 'center';
-                separator.style.color = '#a0a0a0';
-                separator.style.fontSize = '16px';
-            }
-            
-            // 確認按鈕樣式
-            const confirmBtn = document.getElementById('date-confirm');
-            if (confirmBtn) {
-                const btnStyle = 'display:block; width:100%; height:54px; line-height:54px; font-size:18px; ' +
-                    'font-weight:500; background-color:#ededed; color:#000; border:none; border-radius:12px; ' +
-                    '-webkit-appearance:none; margin:10px auto 0;';
-                    
-                confirmBtn.setAttribute('style', btnStyle);
-            }
-            
-            console.log('Mobile styles applied: horizontal layout');
         }
     }
 } 

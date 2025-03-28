@@ -72,14 +72,12 @@ h4 {
 }
 
 .nav-item:hover {
-    background-color: #cccccc;
-    color: #000000;
+    background-color: #2c2c2e;
 }
 
 .nav-item.active {
-    background-color: #ededed;
+    background-color: rgba(255, 255, 255, 0.2);
     font-weight: 500;
-    color: #000000;
 }
 
 /* 主内容区样式 */
@@ -101,14 +99,14 @@ h4 {
     width: 100%;
 }
 
-/* 全局卡片容器间距 */
+/* 全局卡片容器間距 */
 .date-picker,
 .stats-container,
 .charts-container {
     margin: 0 20px 20px 20px;
 }
 
-/* 移除舊的日期选择器和控制列样式 */
+/* 移除舊的日期選擇器和控制列樣式 */
 .controls-row,
 .date-picker,
 .date-picker-label,
@@ -118,7 +116,7 @@ h4 {
     display: none;
 }
 
-/* 统计卡片样式 */
+/* 統計卡片樣式 */
 .stats-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -169,7 +167,7 @@ h4 {
     order: 3;
 }
 
-/* 营业额相关数字的统一样式 */
+/* 營業額相關數字的統一樣式 */
 .stat-card.sales-amount .stat-value {
     color: #2997ff;
     font-size: 28px;
@@ -182,7 +180,7 @@ h4 {
     font-weight: 600;
 }
 
-/* 图表容器样式 */
+/* 圖表容器樣式 */
 .charts-container {
     margin: 0 20px;
 }
@@ -209,7 +207,7 @@ h4 {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
 }
 
-/* 营业额走势图表高度 */
+/* 營業額走勢圖表高度 */
 #sales-trend-chart {
     height: 600px !important;
 }
@@ -233,7 +231,7 @@ h4 {
     height: 100%;
 }
 
-/* 商品比较页面样式 */
+/* 商品比較頁面樣式 */
 .controls-row {
     display: flex;
     gap: 20px;
@@ -262,17 +260,6 @@ h4 {
     gap: 10px;
 }
 
-.selection-button:first-child,
-.selection-button:last-child,
-.selection-button {
-    background-color: #ededed;
-    color: #000000;
-}
-
-.selection-button:hover {
-    background-color: #cccccc;
-}
-
 .selection-button {
     padding: 5px 10px;
     border: none;
@@ -280,14 +267,20 @@ h4 {
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.2s;
-    background-color: #ededed;
-    color: #000000;
 }
 
-.selection-button:first-child,
+.selection-button:first-child {
+    background-color: #0066cc;
+    color: white;
+}
+
 .selection-button:last-child {
-    background-color: #ededed;
-    color: #000000;
+    background-color: #ff453a;
+    color: white;
+}
+
+.selection-button:hover {
+    opacity: 0.9;
 }
 
 .category-accordion {
@@ -567,73 +560,6 @@ h4 {
     .controls-row {
         margin: 0 10px 15px 10px;
     }
-    
-    /* 圖表容器樣式優化 */
-    .chart-card {
-        margin-bottom: 15px;
-        border-radius: 10px;
-        overflow: hidden;  /* 確保內容不會溢出 */
-        padding: 20px 20px 10px 20px; /* 減少底部間距 */
-    }
-    
-    .chart-content {
-        height: 300px !important;
-        padding: 10px 5px 5px 0; /* 減少底部間距 */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    /* 圖表畫布優化 */
-    .chart-content canvas {
-        width: 100% !important;
-        max-width: 100%;
-        margin: 0 auto; /* 水平居中 */
-        padding-bottom: 0; /* 確保底部沒有額外間距 */
-    }
-    
-    /* 營業額走勢圖表優化 */
-    #sales-trend-chart {
-        height: 250px !important;
-        margin-bottom: 0; /* 移除底部間距 */
-    }
-    
-    /* 圖表標題和內容間距 */
-    .chart-card h3 {
-        margin-bottom: 10px;
-        font-size: 18px;
-        padding: 0 15px 10px 15px; /* 調整標題下方間距 */
-    }
-    
-    /* 商品銷售明細卡片優化 */
-    .product-sales-item {
-        padding: 12px 15px;
-        margin-bottom: 10px;
-    }
-    
-    .product-name {
-        font-size: 15px;
-    }
-    
-    .sales-amount {
-        font-size: 22px;
-    }
-    
-    .quantity-info {
-        font-size: 13px;
-    }
-    
-    /* 調整觸摸區域大小 */
-    .product-checkbox {
-        padding: 10px 15px;
-        margin: 5px;
-    }
-    
-    /* 避免水平滾動 */
-    .chart-card, .stat-card {
-        width: auto;
-        max-width: 100%;
-    }
 }
 
 /* 修正商品選擇器的滾動條樣式 */
@@ -815,7 +741,7 @@ h4 {
 }
 
 .close-modal-button:hover {
-    color: #000000;
+    color: #ff453a;
 }
 
 .add-product-button {
@@ -824,8 +750,8 @@ h4 {
     justify-content: center;
     width: 40px;
     height: 40px;
-    background-color: #ededed;
-    color: #000000;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
     border: none;
     border-radius: 50%;
     font-size: 24px;
@@ -834,13 +760,13 @@ h4 {
     right: 20px;
     top: 20px;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
 }
 
 .add-product-button:hover {
-    background-color: #cccccc;
+    background-color: rgba(255, 255, 255, 0.3);
     transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.4);
 }
 
 .chart-card.product-summary {
@@ -1008,8 +934,8 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 20px;
     padding: 0 20px;
-    position: relative;
 }
 
 .page-title {
@@ -1018,17 +944,10 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     color: var(--text-primary);
 }
 
-/* PC端日期選擇器 - 恢復原始佈局 */
 .date-selector {
-    position: relative;
-    top: 0;
-    right: 0;
     display: flex;
     align-items: center;
     gap: 10px;
-    height: auto;
-    margin: 0;
-    padding: 0;
 }
 
 .date-selector input[type="text"] {
@@ -1039,95 +958,126 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     background-color: var(--background-primary);
     color: var(--text-primary);
     font-size: 14px;
-    text-align: center;
-    box-sizing: border-box;
 }
 
 .date-selector .date-separator {
     color: var(--text-secondary);
-    margin: 0 10px;
 }
 
 .date-selector button {
     padding: 6px 12px;
-    background-color: #ededed;
-    color: #000000;
+    background-color: var(--primary-color);
+    color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.2s;
-    white-space: nowrap;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-width: 60px;
 }
 
 .date-selector button:hover {
-    background-color: #cccccc;
+    background-color: var(--primary-color-dark);
+}
+
+/* 確保卡片容器與日期選擇器對齊 */
+.chart-container {
+    padding: 0;
+}
+
+/* 移除舊的日期選擇器樣式 */
+.overview-header {
+    display: none;
+}
+
+/* 日期輸入區域樣式 - 應用於所有設備 */
+.date-selector .date-inputs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.date-selector .date-inputs input[type="text"] {
+    width: 45%;
+    text-align: center;
+}
+
+.date-selector .date-inputs .date-separator {
+    margin: 0 10px;
 }
 
 /* 移動端適配 - 僅影響移動設備 */
 @media (max-width: 768px) {
+    /* 整體頁面結構優化 */
+    .container {
+        padding-top: 0;
+    }
+    
+    .main-content {
+        padding: 15px 0;
+        overflow-x: hidden;
+    }
+    
+    /* 側邊欄在移動端的優化 */
+    .sidebar {
+        padding: 10px 0;
+    }
+    
+    .nav-item {
+        padding: 12px 15px;
+    }
+    
     /* 頁面標題和日期選擇器容器 */
     .page-header {
         flex-direction: column;
         align-items: flex-start;
         padding: 10px 15px;
+        margin-bottom: 15px;
     }
     
-    /* 隱藏頁面標題 */
     .page-title {
-        display: none;
+        margin-bottom: 15px;
+        font-size: 28px;
     }
     
-    /* 移動端日期選擇器的特定樣式 */
+    /* 日期選擇器優化 */
     .date-selector {
         width: 100%;
-        display: block;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
     }
     
-    /* 移動端使用表格佈局 */
-    .date-selector table {
+    /* 水平日期輸入區域 */
+    .date-inputs-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         width: 100%;
-        border-collapse: collapse;
-        border-spacing: 0;
-        margin-bottom: 10px;
     }
     
-    .date-selector td {
-        padding: 0;
-        vertical-align: middle;
-    }
-    
-    /* 移動端輸入框樣式 */
     .date-selector input[type="text"] {
-        width: 100%;
-        height: 44px;
-        padding: 0 5px;
-        font-size: 16px;
+        width: 45%;
+        height: 50px;
+        padding: 0 10px;
+        font-size: 18px;
         text-align: center;
-        border-radius: 8px;
+        border-radius: 10px;
+        background-color: #121212;
         border: 1px solid #333;
-        background-color: var(--background-primary);
-        color: var(--text-primary);
-        -webkit-appearance: none;
-        appearance: none;
     }
     
-    /* 移動端按鈕樣式 */
+    .date-separator {
+        font-size: 18px;
+    }
+    
     .date-selector button {
         width: 100%;
-        height: 44px;
+        height: 50px;
         padding: 0;
         font-size: 18px;
-        border-radius: 8px;
-        display: block;
-        margin-top: 5px;
-        -webkit-appearance: none;
-        appearance: none;
+        border-radius: 10px;
+        margin-top: 10px;
     }
     
     /* 統計卡片排版優化 - 使用網格佈局 */
@@ -1155,40 +1105,31 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         font-size: 14px;
     }
     
-    /* 圖表容器樣式優化 */
+    /* 圖表高度優化 */
     .chart-card {
         margin-bottom: 15px;
         border-radius: 10px;
-        overflow: hidden;  /* 確保內容不會溢出 */
     }
     
     .chart-content {
         height: 300px !important;
-        padding: 10px 5px 5px 0; /* 減少底部間距 */
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        padding: 10px;
     }
     
-    /* 圖表畫布優化 */
-    .chart-content canvas {
-        width: 100% !important;
-        max-width: 100%;
-        margin: 0 auto; /* 水平居中 */
-        padding-bottom: 0; /* 確保底部沒有額外間距 */
-    }
-    
-    /* 營業額走勢圖表優化 */
     #sales-trend-chart {
         height: 250px !important;
-        margin-bottom: 0; /* 移除底部間距 */
     }
     
     /* 圖表標題和內容間距 */
     .chart-card h3 {
         margin-bottom: 10px;
         font-size: 18px;
-        padding: 0 15px 10px 15px; /* 調整標題下方間距 */
+        padding: 10px 15px;
+    }
+    
+    /* 確保圖表容器有適當間距 */
+    .charts-container {
+        margin: 0 10px;
     }
     
     /* 商品銷售明細卡片優化 */
@@ -1219,218 +1160,5 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     .chart-card, .stat-card {
         width: auto;
         max-width: 100%;
-    }
-}
-
-/* 移動端底部導航 - 在所有螢幕尺寸下默認隱藏 */
-.mobile-nav {
-    display: none;
-}
-
-/* 移動端導航項目樣式 */
-.mobile-nav-item {
-    flex: 1;
-    text-align: center;
-    padding: 15px 0;
-    font-size: 16px;
-    color: var(--text-secondary);
-    border-right: 1px solid #2c2c2e;
-    cursor: pointer;
-}
-
-.mobile-nav-item:last-child {
-    border-right: none;
-}
-
-.mobile-nav-item.active {
-    color: #000000;
-    background-color: #ededed;
-    font-weight: 500;
-}
-
-.mobile-nav-item:hover {
-    background-color: #cccccc;
-    color: #000000;
-}
-
-/* 移動端適配 */
-@media (max-width: 768px) {
-    /* 隱藏側邊欄 */
-    .sidebar {
-        display: none;
-    }
-    
-    /* 隱藏頁面標題 - 在移動端上隱藏標題 */
-    .page-title {
-        display: none;
-    }
-    
-    /* 創建底部導航欄 - 只在移動端顯示 */
-    .mobile-nav {
-        display: flex;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background-color: rgba(10, 10, 10, 0.95);
-        border-top: 1px solid #2c2c2e;
-        z-index: 1000;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
-    }
-    
-    /* 給主內容區域添加底部間距，避免被底部導航遮擋 */
-    .main-content {
-        padding-bottom: 60px;
-    }
-}
-
-/* 修正移動端日期選擇器 */
-@media (max-width: 768px) {
-    .flatpickr-calendar {
-        max-width: 280px;
-        left: 50% !important;
-        transform: translateX(-50%) !important;
-    }
-}
-
-/* 水平日期輸入區域 */
-.date-inputs-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-
-/* flatpickr 樣式統一 */
-.flatpickr-input {
-    border: 1px solid var(--border-color);
-    background-color: var(--background-primary);
-    padding: 6px 10px;
-    border-radius: 4px;
-    color: var(--text-primary);
-    height: auto;
-}
-
-.flatpickr-calendar {
-    border: 1px solid var(--border-color);
-    background-color: var(--background-secondary);
-    z-index: 999 !important; /* 確保日曆顯示在最上層 */
-}
-
-/* 確保日期選擇器正常交互 */
-.flatpickr-input {
-    cursor: pointer;
-}
-
-/* 修正輸入框樣式 */
-.date-selector input[type="text"]:focus {
-    outline: none;
-    border-color: var(--primary-color);
-}
-
-/* 修正日期選擇器容器 */
-.flatpickr-wrapper {
-    height: auto !important;
-    display: inline-block !important;
-}
-
-/* 統一所有頁面的日期選擇器高度 */
-#overview-page .date-selector,
-#product-comparison-page .date-selector {
-    height: auto !important;
-    min-height: 32px;
-    margin: 0;
-    padding: 0;
-}
-
-.flatpickr-calendar {
-    border: 1px solid var(--border-color);
-    background-color: var(--background-secondary);
-}
-
-/* 優化日期選擇器樣式 */
-.flatpickr-calendar {
-    background-color: var(--background-primary) !important;
-    box-shadow: 0 3px 13px rgba(0, 0, 0, 0.3) !important;
-}
-
-.flatpickr-day {
-    color: var(--text-primary) !important;
-    border-radius: 4px !important;
-}
-
-.flatpickr-day.selected {
-    background-color: var(--primary-color) !important;
-    border-color: var(--primary-color) !important;
-}
-
-.flatpickr-day:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.flatpickr-months .flatpickr-month,
-.flatpickr-weekdays {
-    background-color: var(--background-primary) !important;
-    color: var(--text-primary) !important;
-}
-
-.flatpickr-current-month .flatpickr-monthDropdown-months,
-.flatpickr-current-month input.cur-year {
-    color: var(--text-primary) !important;
-}
-
-.flatpickr-weekday {
-    color: var(--text-secondary) !important;
-}
-
-/* 移動端顯示優化 */
-@media (max-width: 768px) {
-    /* 確保日期輸入容器水平排列 */
-    .date-inputs-container {
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        width: 100% !important;
-        margin-bottom: 10px !important;
-    }
-    
-    /* 確保日期輸入框樣式正確 */
-    .date-inputs-container input[type="text"] {
-        width: 44% !important;
-        height: 54px !important;
-        font-size: 16px !important;
-        text-align: center !important;
-        border-radius: 12px !important;
-        border: 1px solid #333 !important;
-        background: #0a0a0a !important;
-        color: #fff !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        box-sizing: border-box !important;
-    }
-    
-    /* 確保日期分隔符樣式正確 */
-    .date-inputs-container .date-separator {
-        display: inline-block !important;
-        width: 10% !important;
-        text-align: center !important;
-        color: #a0a0a0 !important;
-        font-size: 16px !important;
-    }
-    
-    /* 確保日期確認按鈕樣式正確 */
-    #date-confirm, #product-date-confirm {
-        display: block !important;
-        width: 100% !important;
-        height: 54px !important;
-        line-height: 54px !important;
-        font-size: 18px !important;
-        font-weight: 500 !important;
-        background-color: #ededed !important;
-        color: #000 !important;
-        border: none !important;
-        border-radius: 12px !important;
-        margin: 10px auto 0 !important;
     }
 } 
