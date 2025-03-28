@@ -1351,9 +1351,9 @@ class OverviewPage {
         const endInput = document.getElementById('end-date');
         
         if (startInput && endInput) {
-            // 應用大尺寸樣式
-            const inputStyle = 'width:43%; height:70px; font-size:18px; text-align:center; border-radius:16px; ' +
-                'border:1px solid #444; background:#0a0a0a; color:#fff; padding:0; margin:0; ' +
+            // 應用更合適的中等尺寸樣式
+            const inputStyle = 'width:44%; height:54px; font-size:16px; text-align:center; border-radius:12px; ' +
+                'border:1px solid #333; background:#0a0a0a; color:#fff; padding:0; margin:0; ' +
                 '-webkit-appearance:none; box-sizing:border-box;';
                 
             startInput.setAttribute('style', inputStyle);
@@ -1362,14 +1362,14 @@ class OverviewPage {
             // 確認按鈕樣式
             const confirmBtn = document.getElementById('date-confirm');
             if (confirmBtn) {
-                const btnStyle = 'display:block; width:100%; height:70px; line-height:70px; font-size:20px; ' +
-                    'font-weight:500; background-color:#ededed; color:#000; border:none; border-radius:16px; ' +
-                    '-webkit-appearance:none; margin:0 auto;';
+                const btnStyle = 'display:block; width:100%; height:54px; line-height:54px; font-size:18px; ' +
+                    'font-weight:500; background-color:#ededed; color:#000; border:none; border-radius:12px; ' +
+                    '-webkit-appearance:none; margin:10px auto 0;';
                     
                 confirmBtn.setAttribute('style', btnStyle);
             }
             
-            console.log('Mobile styles applied directly to elements');
+            console.log('Mobile styles applied: medium size variant');
         }
     }
 } 
