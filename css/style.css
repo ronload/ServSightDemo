@@ -1044,7 +1044,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
 
 .date-selector .date-separator {
     color: var(--text-secondary);
-    margin: 0 15px; /* 增加"至"文字兩側的間距，從原本的無指定間距改為15px */
+    margin: 0 10px;
 }
 
 .date-selector button {
@@ -1092,7 +1092,7 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
 }
 
 .date-selector .date-inputs .date-separator {
-    margin: 0 15px; /* 統一PC端與移動端的日期分隔符號間距 */
+    margin: 0 15px;
 }
 
 /* 移動端適配 - 僅影響移動設備 */
@@ -1149,12 +1149,14 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     
     .date-selector input[type="text"] {
         width: 45%;
-        height: 50px;
+        height: 42px; /* 調整輸入框高度 */
         padding: 0 10px;
-        font-size: 18px;
+        font-size: 16px; /* 調整字體大小 */
         text-align: center;
-        border-radius: 10px;
+        border-radius: 8px; /* 調整圓角 */
         border: 1px solid #333;
+        -webkit-appearance: none; /* 修復Safari樣式問題 */
+        appearance: none;
     }
     
     .date-separator {
@@ -1163,11 +1165,13 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     
     .date-selector button {
         width: 100%;
-        height: 50px;
+        height: 42px; /* 調整按鈕高度 */
         padding: 0;
         font-size: 18px;
-        border-radius: 10px;
+        border-radius: 8px; /* 調整圓角 */
         margin-top: 10px;
+        -webkit-appearance: none; /* 修復Safari樣式問題 */
+        appearance: none;
     }
     
     /* 統計卡片排版優化 - 使用網格佈局 */
