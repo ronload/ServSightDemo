@@ -227,7 +227,6 @@ h4 {
 .chart-content canvas {
     position: absolute;
     top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
 }
@@ -559,7 +558,7 @@ h4 {
     
     /* 增加统计卡片与顶部导航栏之间的间距 */
     .stats-container {
-        margin-top: 30px;
+        margin-top: 10px;
         margin-left: 10px;
         margin-right: 10px;
         width: calc(100% - 20px);
@@ -575,6 +574,18 @@ h4 {
     .chart-card, .stat-card {
         width: 100%;
         max-width: 100%;
+    }
+    
+    /* 修改移動端的charts-row佈局，消除間距問題 */
+    .charts-row {
+        display: block; /* 改為區塊佈局而非網格 */
+        gap: 0;
+        margin-bottom: 0;
+    }
+    
+    /* 確保.chart-card在移動端保持一致的margin-bottom */
+    .charts-row .chart-card {
+        margin-bottom: 20px; /* 保持所有卡片間的間距一致 */
     }
 }
 
@@ -1295,25 +1306,9 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
     padding: 0 4px;
 }
 
-.mobile-date-selector button {
-    flex: 0 0 auto;
-    background-color: #ededed;
-    border: 1px solid #ededed;
-    border-radius: 4px;
-    color: #000000;
-    padding: 6px 14px;
-    cursor: pointer;
-    font-size: 14px;
-    white-space: nowrap;
-    min-width: 60px;
-}
+/* 移除確認按鈕相關樣式 */
 
-.mobile-date-selector button:hover {
-    background-color: #ededed;
-    color: #000000;
-}
-
-/* 较小屏幕的适配 */
+/* 較小屏幕的適配 */
 @media (max-width: 420px) {
     .mobile-date-selector {
         gap: 4px;
@@ -1328,24 +1323,12 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         padding: 0 2px;
         font-size: 13px;
     }
-    
-    .mobile-date-selector button {
-        padding: 5px 10px;
-        font-size: 13px;
-        min-width: 50px;
-    }
 }
 
 @media (max-width: 360px) {
     .mobile-date-selector input {
         padding: 5px 1px;
         font-size: 12px;
-    }
-    
-    .mobile-date-selector button {
-        padding: 4px 8px;
-        font-size: 12px;
-        min-width: 45px;
     }
 }
 
@@ -1384,24 +1367,16 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
         width: 100%;
     }
     
-    /* 增加统计卡片与顶部导航栏之间的间距 */
-    .stats-container {
-        margin-top: 10px;
-        margin-left: 10px;
-        margin-right: 10px;
-        width: calc(100% - 20px);
+    /* 修改移動端的charts-row佈局，消除間距問題 */
+    .charts-row {
+        display: block; /* 改為區塊佈局而非網格 */
+        gap: 0;
+        margin-bottom: 0;
     }
     
-    .charts-container {
-        margin-left: 10px;
-        margin-right: 10px;
-        width: calc(100% - 20px);
-    }
-    
-    /* 確保所有內容區元素的寬度一致 */
-    .chart-card, .stat-card {
-        width: 100%;
-        max-width: 100%;
+    /* 確保.chart-card在移動端保持一致的margin-bottom */
+    .charts-row .chart-card {
+        margin-bottom: 20px; /* 保持所有卡片間的間距一致 */
     }
 }
 

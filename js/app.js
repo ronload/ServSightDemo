@@ -169,7 +169,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // 獲取移動端和原始日期選擇器元素
             const mobileStartDate = document.getElementById('mobile-start-date');
             const mobileEndDate = document.getElementById('mobile-end-date');
-            const mobileConfirmBtn = document.getElementById('mobile-date-confirm');
             
             const originalStartDate = document.getElementById('start-date');
             const originalEndDate = document.getElementById('end-date');
@@ -179,7 +178,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const productEndDate = document.getElementById('product-end-date');
             const productConfirmBtn = document.getElementById('product-date-confirm');
             
-            if (!mobileStartDate || !mobileEndDate || !mobileConfirmBtn) {
+            if (!mobileStartDate || !mobileEndDate) {
                 console.log('Mobile date selector elements not found');
                 return;
             }
@@ -218,6 +217,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Mobile date selector container not found');
                 return;
             }
+            
+            // 自動觸發確認按鈕的函數
+            const triggerConfirmButton = () => {
+                console.log('Auto triggering confirm button');
+                
+                // 獲取目前激活的頁面
+                const activePage = document.querySelector('.page.active');
+                if (activePage) {
+                    if (activePage.id === 'overview-page' && originalConfirmBtn) {
+                        originalConfirmBtn.click();
+                    } else if (activePage.id === 'product-comparison-page' && productConfirmBtn) {
+                        productConfirmBtn.click();
+                    }
+                }
+            };
             
             // 初始化移動端日期選擇器
             const mobileStartDatePicker = flatpickr("#mobile-start-date", {
@@ -269,6 +283,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                 const event = new Event('change');
                                 productStartDate.dispatchEvent(event);
                             }
+                        }
+                        
+                        // 如果結束日期已設置，自動觸發確認按鈕
+                        if (mobileEndDate.value) {
+                            triggerConfirmButton();
                         }
                     }
                 }
@@ -326,6 +345,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 productEndDate.dispatchEvent(event);
                             }
                         }
+                        
+                        // 選擇完結束日期後自動觸發確認按鈕
+                        triggerConfirmButton();
                     }
                 }
             });
@@ -333,23 +355,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // 將 flatpickr 實例保存到全局變量
             window.mobileStartDatePicker = mobileStartDatePicker;
             window.mobileEndDatePicker = mobileEndDatePicker;
-            
-            // 綁定確認按鈕事件
-            if (mobileConfirmBtn) {
-                mobileConfirmBtn.addEventListener('click', () => {
-                    console.log('Mobile confirm button clicked');
-                    
-                    // 獲取目前激活的頁面
-                    const activePage = document.querySelector('.page.active');
-                    if (activePage) {
-                        if (activePage.id === 'overview-page' && originalConfirmBtn) {
-                            originalConfirmBtn.click();
-                        } else if (activePage.id === 'product-comparison-page' && productConfirmBtn) {
-                            productConfirmBtn.click();
-                        }
-                    }
-                });
-            }
             
             // 監聽頁面切換，更新頂部導航欄的日期
             if (window.app) {

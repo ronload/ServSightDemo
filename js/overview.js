@@ -216,7 +216,7 @@ class OverviewPage {
             this.salesTrendChart.update();
         }
         
-        // 清空星期平均營業額圖表
+        // 清空星期平均營業額圖
         if (this.weekdayChart) {
             this.weekdayChart.data.labels = [];
             this.weekdayChart.data.datasets[0].data = [];
@@ -329,14 +329,25 @@ class OverviewPage {
                         display: true,
                         position: 'top',
                         labels: {
-                            color: '#a0a0a0'
+                            color: '#9E9E9E', // Material Design 灰色
+                            boxWidth: 12,
+                            padding: 15
                         }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(33, 33, 33, 0.8)', // Material Design 深灰色
+                        titleColor: '#FFFFFF',
+                        bodyColor: '#FFFFFF',
+                        borderColor: 'rgba(255, 255, 255, 0.1)',
+                        borderWidth: 1,
+                        padding: 10,
+                        cornerRadius: 4 // Material Design 圓角
                     }
                 },
                 scales: {
                     x: {
                         ticks: {
-                            color: '#a0a0a0',
+                            color: '#9E9E9E', // Material Design 灰色
                             callback: function(value, index, values) {
                                 if (isMobile) {
                                     // 移動端簡化為 MM/DD 格式
@@ -349,12 +360,13 @@ class OverviewPage {
                             }
                         },
                         grid: {
-                            color: 'rgba(160, 160, 160, 0.1)'
+                            display: false,
+                            drawBorder: false
                         }
                     },
                     y: {
                         ticks: {
-                            color: '#a0a0a0',
+                            color: '#9E9E9E', // Material Design 灰色
                             callback: function(value, index, values) {
                                 if (isMobile) {
                                     // 移動端使用 k 表示千元
@@ -366,9 +378,27 @@ class OverviewPage {
                             }
                         },
                         grid: {
-                            color: 'rgba(160, 160, 160, 0.1)'
+                            color: 'rgba(200, 200, 200, 0.08)', // 極淡的網格線
+                            drawBorder: false
                         },
                         beginAtZero: true
+                    }
+                },
+                animation: {
+                    duration: 800, // 更短的動畫時間，符合Material的即時反饋原則
+                    easing: 'easeOutCubic' // Material Design 推薦的緩動函數
+                },
+                elements: {
+                    line: {
+                        tension: 0.4 // 平滑曲線
+                    }
+                },
+                layout: {
+                    padding: {
+                        left: 0,
+                        right: 8,
+                        top: 8,
+                        bottom: 0
                     }
                 }
             };
@@ -380,13 +410,16 @@ class OverviewPage {
                     {
                         label: '日營業額',
                         data: amounts,
-                        borderColor: '#2997ff',
-                        backgroundColor: 'rgba(41, 151, 255, 0.1)',
-                        fill: false,
+                        borderColor: '#2196F3', // Material Design 主色藍
+                        backgroundColor: 'rgba(33, 150, 243, 0.12)', // 淺藍色半透明
+                        fill: true,
                         borderWidth: 2,
                         tension: 0.4,
-                        pointRadius: isMobile ? 2 : 3,
-                        pointHoverRadius: isMobile ? 4 : 5
+                        pointRadius: isMobile ? 1.5 : 2,
+                        pointHoverRadius: isMobile ? 3 : 4,
+                        pointBackgroundColor: '#2196F3',
+                        pointBorderColor: '#2196F3',
+                        pointBorderWidth: 1
                     }
                 ]
             };
@@ -396,14 +429,28 @@ class OverviewPage {
                 chartData.datasets.push({
                     label: '三日平均',
                     data: movingAverages,
-                    borderColor: 'rgba(116, 201, 255, 0.7)',
-                    backgroundColor: 'rgba(116, 201, 255, 0.1)',
+                    borderColor: '#64B5F6', // Material Design 淺藍色
+                    backgroundColor: 'rgba(0, 0, 0, 0)',
                     fill: false,
                     borderWidth: 1.5,
+                    borderDash: [5, 3],
                     tension: 0.4,
                     pointRadius: 0
                 });
             }
+            
+            // 添加水平線
+            chartData.datasets.push({
+                label: '$20000',
+                data: twentyThousandLine,
+                borderColor: 'rgba(255, 255, 255, 0.3)',
+                backgroundColor: 'rgba(255, 255, 255, 0.3)',
+                fill: false,
+                borderWidth: 1,
+                borderDash: [3, 3],
+                tension: 0,
+                pointRadius: 0
+            });
             
             // 創建或更新圖表
             const ctx = chartContainer.getContext('2d');
@@ -415,13 +462,16 @@ class OverviewPage {
                     {
                         label: '日營業額',
                         data: amounts,
-                        borderColor: '#2997ff',
-                        backgroundColor: 'rgba(41, 151, 255, 0.1)',
-                        fill: false,
+                        borderColor: '#2196F3', // Material Design 主色藍
+                        backgroundColor: 'rgba(33, 150, 243, 0.12)', // 淺藍色半透明
+                        fill: true,
                         borderWidth: 2,
                         tension: 0.4,
-                        pointRadius: isMobile ? 2 : 3,
-                        pointHoverRadius: isMobile ? 4 : 5
+                        pointRadius: isMobile ? 1.5 : 2,
+                        pointHoverRadius: isMobile ? 3 : 4,
+                        pointBackgroundColor: '#2196F3',
+                        pointBorderColor: '#2196F3',
+                        pointBorderWidth: 1
                     }
                 ];
                 
@@ -430,10 +480,11 @@ class OverviewPage {
                     this.salesTrendChart.data.datasets.push({
                         label: '三日平均',
                         data: movingAverages,
-                        borderColor: 'rgba(116, 201, 255, 0.7)',
-                        backgroundColor: 'rgba(116, 201, 255, 0.1)',
+                        borderColor: '#64B5F6', // Material Design 淺藍色
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
                         fill: false,
                         borderWidth: 1.5,
+                        borderDash: [5, 3],
                         tension: 0.4,
                         pointRadius: 0
                     });
@@ -443,11 +494,12 @@ class OverviewPage {
                 this.salesTrendChart.data.datasets.push({
                     label: '$20000',
                     data: twentyThousandLine,
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.3)',
                     fill: false,
-                    borderWidth: 1.5,
-                    tension: 0.4,
+                    borderWidth: 1,
+                    borderDash: [3, 3],
+                    tension: 0,
                     pointRadius: 0
                 });
                 
@@ -484,13 +536,16 @@ class OverviewPage {
                             {
                                 label: '日營業額',
                                 data: amounts,
-                                borderColor: '#2997ff',
-                                backgroundColor: 'rgba(41, 151, 255, 0.1)',
-                                fill: false,
-                                borderWidth: 1,
+                                borderColor: '#2196F3', // Material Design 主色藍
+                                backgroundColor: 'rgba(33, 150, 243, 0.12)', // 淺藍色半透明
+                                fill: true,
+                                borderWidth: 2,
                                 tension: 0.4,
-                                pointRadius: isMobile ? 2 : 3,
-                                pointHoverRadius: isMobile ? 4 : 5
+                                pointRadius: isMobile ? 1.5 : 2,
+                                pointHoverRadius: isMobile ? 3 : 4,
+                                pointBackgroundColor: '#2196F3',
+                                pointBorderColor: '#2196F3',
+                                pointBorderWidth: 1
                             }
                         ]
                     },
@@ -505,14 +560,25 @@ class OverviewPage {
                                 display: true,
                                 position: 'top',
                                 labels: {
-                                    color: '#a0a0a0'
+                                    color: '#9E9E9E', // Material Design 灰色
+                                    boxWidth: 12,
+                                    padding: 15
                                 }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(33, 33, 33, 0.8)', // Material Design 深灰色
+                                titleColor: '#FFFFFF',
+                                bodyColor: '#FFFFFF',
+                                borderColor: 'rgba(255, 255, 255, 0.1)',
+                                borderWidth: 1,
+                                padding: 10,
+                                cornerRadius: 4 // Material Design 圓角
                             }
                         },
                         scales: {
                             x: {
                                 ticks: {
-                                    color: '#a0a0a0',
+                                    color: '#9E9E9E', // Material Design 灰色
                                     callback: function(value, index, values) {
                                         if (isMobile) {
                                             // 移動端簡化為 MM/DD 格式
@@ -525,12 +591,13 @@ class OverviewPage {
                                     }
                                 },
                                 grid: {
-                                    color: 'rgba(160, 160, 160, 0.1)'
+                                    display: false,
+                                    drawBorder: false
                                 }
                             },
                             y: {
                                 ticks: {
-                                    color: '#a0a0a0',
+                                    color: '#9E9E9E', // Material Design 灰色
                                     callback: function(value, index, values) {
                                         if (isMobile) {
                                             // 移動端使用 k 表示千元
@@ -542,9 +609,27 @@ class OverviewPage {
                                     }
                                 },
                                 grid: {
-                                    color: 'rgba(160, 160, 160, 0.1)'
+                                    color: 'rgba(200, 200, 200, 0.08)', // 極淡的網格線
+                                    drawBorder: false
                                 },
                                 beginAtZero: true
+                            }
+                        },
+                        animation: {
+                            duration: 800, // 更短的動畫時間，符合Material的即時反饋原則
+                            easing: 'easeOutCubic' // Material Design 推薦的緩動函數
+                        },
+                        elements: {
+                            line: {
+                                tension: 0.4 // 平滑曲線
+                            }
+                        },
+                        layout: {
+                            padding: {
+                                left: 0,
+                                right: 8,
+                                top: 8,
+                                bottom: 0
                             }
                         }
                     }
@@ -555,10 +640,11 @@ class OverviewPage {
                     this.salesTrendChart.data.datasets.push({
                         label: '三日平均',
                         data: movingAverages,
-                        borderColor: 'rgba(116, 201, 255, 0.7)',
-                        backgroundColor: 'rgba(116, 201, 255, 0.1)',
+                        borderColor: '#64B5F6', // Material Design 淺藍色
+                        backgroundColor: 'rgba(0, 0, 0, 0)',
                         fill: false,
                         borderWidth: 1.5,
+                        borderDash: [5, 3],
                         tension: 0.4,
                         pointRadius: 0
                     });
@@ -568,11 +654,12 @@ class OverviewPage {
                 this.salesTrendChart.data.datasets.push({
                     label: '$20000',
                     data: twentyThousandLine,
-                    borderColor: 'rgba(255, 255, 255, 0.5)',
-                    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                    borderColor: 'rgba(255, 255, 255, 0.3)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.3)',
                     fill: false,
-                    borderWidth: 1.5,
-                    tension: 0.4,
+                    borderWidth: 1,
+                    borderDash: [3, 3],
+                    tension: 0,
                     pointRadius: 0
                 });
                 
@@ -618,9 +705,9 @@ class OverviewPage {
                     quantityByProduct[item.product] += item.quantity;
                     
                     // 記錄套餐和單點的數量
-                    if (item.rawProduct && item.rawProduct.includes('(單點)')) {
+                    if (item.rawProduct && item.rawProduct.includes('單點')) {
                         detailsByProduct[item.product].singleItems += item.quantity;
-                    } else if (item.rawProduct && item.rawProduct.includes('(套餐)')) {
+                    } else if (item.rawProduct && item.rawProduct.includes('套餐')) {
                         detailsByProduct[item.product].setItems += item.quantity;
                     }
                 }
@@ -639,100 +726,170 @@ class OverviewPage {
             // 获取前五名
             const topProducts = productSalesArray.slice(0, 5);
             
-            const chartLabels = topProducts.map(item => item.product);
+            const chartLabels = topProducts.map(item => ''); // 空標籤，因為我們將使用自定義標籤繪製
             const chartData = topProducts.map(item => item.amount);
-            const chartColors = getRandomColors(topProducts.length);
+            // 使用統一顏色 rgba(54, 162, 235, 0.7)，不再使用隨機顏色
+            const chartColor = 'rgba(54, 162, 235, 0.7)';  // 標準藍色
+            
+            // 自定義繪製插件
+            const customLabelsPlugin = {
+                id: 'customLabels',
+                afterDraw: function(chart) {
+                    const ctx = chart.ctx;
+                    const meta = chart.getDatasetMeta(0);
+                    
+                    ctx.save();
+                    ctx.font = '13px Roboto, Arial, sans-serif'; // Material Design 偏好 Roboto
+                    
+                    meta.data.forEach((bar, index) => {
+                        const item = topProducts[index];
+                        const formattedAmount = formatAmount(item.amount);
+                        
+                        // 獲取長條的位置信息
+                        const y = bar.y;
+                        
+                        // 在長條左上方顯示產品名稱
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.textAlign = 'left';
+                        ctx.textBaseline = 'bottom';
+                        // 名稱位置調整：加大間距
+                        ctx.fillText(item.product, 5, y - 10);
+                        
+                        // 在長條最右邊顯示銷售額和份數
+                        ctx.textAlign = 'right';
+                        ctx.fillStyle = '#BDBDBD';  // Material Design 淺灰色
+                        // 銷售額和份數位置調整
+                        ctx.fillText(`$${formattedAmount} (${item.quantity}份)`, chart.chartArea.right - 5, y - 10);
+                    });
+                    
+                    ctx.restore();
+                }
+            };
             
             // 创建或更新图表
             const ctx = chartContainer.getContext('2d');
             
             if (this.topProductsChart) {
-                this.topProductsChart.data.labels = chartLabels;
-                this.topProductsChart.data.datasets[0].data = chartData;
-                this.topProductsChart.data.datasets[0].backgroundColor = chartColors;
-                this.topProductsChart.update();
-                console.log('Top products chart updated');
-            } else {
-                console.log('Creating new top products chart');
-                this.topProductsChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: chartLabels,
-                        datasets: [{
-                            label: '銷售額',
-                            data: chartData,
-                            backgroundColor: chartColors,
-                            borderWidth: 1
-                        }]
+                // 銷毀舊圖表重建，以確保自定義插件生效
+                this.topProductsChart.destroy();
+                this.topProductsChart = null;
+            }
+            
+            // 創建新圖表
+            this.topProductsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: '銷售額',
+                        data: chartData,
+                        backgroundColor: '#2196F3', // Material Design 藍色
+                        borderWidth: 0,
+                        barThickness: 10, // Material Design 更偏好纖細的元素
+                        borderRadius: 2,  // Material Design 的微小圓角
+                        borderSkipped: false // 確保圓角應用到所有邊
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    layout: {
+                        padding: {
+                            top: 25, // Material Design 更注重空間留白
+                            right: 20, // 為右側標籤留出空間
+                            left: 5,  // 左側少量空間
+                            bottom: 10 // 底部少量空間
+                        }
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        indexAxis: 'y',
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const item = topProducts[context.dataIndex];
-                                        const lines = [
-                                            `銷售額: ${formatAmount(item.amount)} 元`,
-                                            `銷售數量: ${item.quantity} 份`
-                                        ];
-                                        
-                                        // 添加套餐和單點的詳情
-                                        if (item.details.setItems > 0 || item.details.singleItems > 0) {
-                                            const detailParts = [];
-                                            if (item.details.setItems > 0) {
-                                                detailParts.push(`套餐: ${item.details.setItems} 份`);
-                                            }
-                                            if (item.details.singleItems > 0) {
-                                                detailParts.push(`單點: ${item.details.singleItems} 份`);
-                                            }
-                                            
-                                            if (detailParts.length > 0) {
-                                                lines.push(`內含: ${detailParts.join(', ')}`);
-                                            }
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true,
+                            backgroundColor: 'rgba(33, 33, 33, 0.8)', // Material Design 深灰色
+                            titleColor: '#FFFFFF',
+                            bodyColor: '#FFFFFF',
+                            borderColor: 'rgba(255, 255, 255, 0.1)',
+                            borderWidth: 1,
+                            padding: 10,
+                            cornerRadius: 4, // Material Design 圓角
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    const item = topProducts[context.dataIndex];
+                                    const lines = [
+                                        `銷售額: ${formatAmount(item.amount)} 元`,
+                                        `銷售數量: ${item.quantity} 份`
+                                    ];
+                                    
+                                    // 添加套餐和單點的詳情
+                                    if (item.details.setItems > 0 || item.details.singleItems > 0) {
+                                        const detailParts = [];
+                                        if (item.details.setItems > 0) {
+                                            detailParts.push(`套餐: ${item.details.setItems} 份`);
+                                        }
+                                        if (item.details.singleItems > 0) {
+                                            detailParts.push(`單點: ${item.details.singleItems} 份`);
                                         }
                                         
-                                        return lines;
+                                        if (detailParts.length > 0) {
+                                            lines.push(`內含: ${detailParts.join(', ')}`);
+                                        }
                                     }
-                                }
-                            }
-                        },
-                        scales: {
-                            x: {
-                                beginAtZero: true,
-                                ticks: {
-                                    callback: function(value) {
-                                        return formatAmount(value) + ' 元';
-                                    }
+                                    
+                                    return lines;
                                 }
                             }
                         }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                display: false,
+                                drawBorder: false
+                            },
+                            ticks: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            display: false, // 隱藏Y軸刻度
+                            spacing: 16,    // Material Design 偏好 8 的倍數間距
+                            border: {
+                                display: false
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 500,  // Material Design 偏好更快速的反應
+                        easing: 'easeOutQuad' // Material Design 推薦的緩動函數
                     }
-                });
-            }
+                },
+                plugins: [customLabelsPlugin]
+            });
+            
+            console.log('Top products chart created');
         } catch (error) {
             console.error('Error updating top products chart:', error);
         }
     }
     
-    // 更新分类销售比例的饼图
+    // 更新分类销售比例圖表
     updateCategoryPieChart(data) {
         try {
-            console.log('Updating category pie chart...');
+            console.log('Updating category chart...');
             
             // 檢查圖表容器是否存在
             const chartContainer = document.getElementById('category-pie-chart');
             if (!chartContainer) {
-                console.error('Category pie chart container not found');
+                console.error('Category chart container not found');
                 return;
             }
             
-            // 按分类分组并计算销售额和銷售數量
+            // 按分类分组并计算销售額和銷售數量
             const salesByCategory = {};
             const quantityByCategory = {};
             const detailsByCategory = {};
@@ -783,77 +940,180 @@ class OverviewPage {
                 });
             }
             
-            const categories = Object.keys(salesByCategory);
-            const chartData = categories.map(category => salesByCategory[category]);
-            const chartColors = getRandomColors(categories.length);
+            // 計算總銷售額
+            const totalSales = Object.values(salesByCategory).reduce((sum, amount) => sum + amount, 0);
             
-            // 创建或更新图表
+            // 按銷售額排序分類
+            const categoriesArray = Object.keys(salesByCategory)
+                .map(category => ({
+                    category,
+                    amount: salesByCategory[category],
+                    percentage: ((salesByCategory[category] / totalSales) * 100).toFixed(1)
+                }))
+                .sort((a, b) => b.amount - a.amount);
+            
+            const categories = categoriesArray.map(item => item.category);
+            const chartData = categoriesArray.map(item => item.amount);
+            const percentages = categoriesArray.map(item => parseFloat(item.percentage));
+            
+            // 獲取每個分類的顏色 - 使用 Material Design 調色板
+            const colorOptions = [
+                '#2196F3', // Material Blue
+                '#4CAF50', // Material Green
+                '#FFC107', // Material Amber
+                '#9C27B0', // Material Purple
+                '#FF5722'  // Material Deep Orange
+            ];
+            
+            const chartColors = [];
+            categories.forEach((category, index) => {
+                chartColors.push(colorOptions[index % colorOptions.length]);
+            });
+            
+            // 創建或更新圖表
             const ctx = chartContainer.getContext('2d');
             
             if (this.categoryPieChart) {
-                this.categoryPieChart.data.labels = categories;
-                this.categoryPieChart.data.datasets[0].data = chartData;
-                this.categoryPieChart.data.datasets[0].backgroundColor = chartColors;
-                this.categoryPieChart.update();
-                console.log('Category pie chart updated');
-            } else {
-                console.log('Creating new category pie chart');
-                this.categoryPieChart = new Chart(ctx, {
-                    type: 'pie',
-                    data: {
-                        labels: categories,
-                        datasets: [{
-                            data: chartData,
-                            backgroundColor: chartColors,
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'right'
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        const total = context.dataset.data.reduce((sum, value) => sum + value, 0);
-                                        const percentage = ((context.raw / total) * 100).toFixed(1);
-                                        const category = context.label;
-                                        const quantity = quantityByCategory[category];
-                                        const details = detailsByCategory[category];
-                                        
-                                        const lines = [
-                                            `${category}: ${formatAmount(context.raw)} 元 (${percentage}%)`,
-                                            `銷售數量: ${quantity} 份`
-                                        ];
-                                        
-                                        // 添加套餐和單點的詳情
-                                        if (details && (details.setItems > 0 || details.singleItems > 0)) {
-                                            const detailParts = [];
-                                            if (details.setItems > 0) {
-                                                detailParts.push(`套餐: ${details.setItems} 份`);
-                                            }
-                                            if (details.singleItems > 0) {
-                                                detailParts.push(`單點: ${details.singleItems} 份`);
-                                            }
-                                            
-                                            if (detailParts.length > 0) {
-                                                lines.push(`內含: ${detailParts.join(', ')}`);
-                                            }
-                                        }
-                                        
-                                        return lines;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
+                // 銷毀舊圖表
+                this.categoryPieChart.destroy();
+                this.categoryPieChart = null;
             }
+            
+            // 清除畫布並設置大小
+            const container = chartContainer.parentElement;
+            const containerWidth = container.clientWidth;
+            const containerHeight = container.clientHeight;
+            
+            // 考慮裝置像素比例以提高畫面清晰度
+            const dpr = window.devicePixelRatio || 1;
+            chartContainer.width = containerWidth * dpr;
+            chartContainer.height = containerHeight * dpr;
+            
+            // 設置CSS尺寸
+            chartContainer.style.width = `${containerWidth}px`;
+            chartContainer.style.height = `${containerHeight}px`;
+            
+            // 調整Canvas的繪圖比例
+            ctx.scale(dpr, dpr);
+            
+            // 計算長條的位置和尺寸
+            const barHeight = 18; // Material Design 偏好較為纖細的元素
+            const barY = 40; // 由於移除了標題，所以將長條向上移
+            const barWidth = containerWidth - 40;
+            const startX = 20;
+            
+            // 繪製長條圖
+            ctx.save();
+            
+            // 繪製單一長條，不同顏色區塊代表不同分類
+            let currentX = startX;
+            categoriesArray.forEach((item, index) => {
+                const widthPercentage = parseFloat(item.percentage) / 100;
+                const segmentWidth = barWidth * widthPercentage;
+                
+                // 繪製此分類的區塊
+                ctx.fillStyle = chartColors[index];
+                ctx.beginPath();
+                // Material Design 偏好更小的圓角或直角
+                if (index === 0) { // 第一個區塊（左側）
+                    ctx.moveTo(currentX + 2, barY); // 左上角微小圓角
+                    ctx.lineTo(currentX + segmentWidth, barY);
+                    ctx.lineTo(currentX + segmentWidth, barY + barHeight);
+                    ctx.lineTo(currentX + 2, barY + barHeight);
+                    ctx.arc(currentX + 2, barY + barHeight - 2, 2, Math.PI/2, Math.PI, false); // 左下角微小圓角
+                    ctx.lineTo(currentX, barY + 2);
+                    ctx.arc(currentX + 2, barY + 2, 2, Math.PI, Math.PI*3/2, false); // 左上角微小圓角
+                } else if (index === categoriesArray.length - 1) { // 最後一個區塊（右側）
+                    ctx.moveTo(currentX, barY);
+                    ctx.lineTo(currentX + segmentWidth - 2, barY);
+                    ctx.arc(currentX + segmentWidth - 2, barY + 2, 2, Math.PI*3/2, 0, false); // 右上角微小圓角
+                    ctx.lineTo(currentX + segmentWidth, barY + barHeight - 2);
+                    ctx.arc(currentX + segmentWidth - 2, barY + barHeight - 2, 2, 0, Math.PI/2, false); // 右下角微小圓角
+                    ctx.lineTo(currentX, barY + barHeight);
+                } else { // 中間區塊（無圓角）
+                    ctx.rect(currentX, barY, segmentWidth, barHeight);
+                }
+                ctx.fill();
+                
+                currentX += segmentWidth;
+            });
+            
+            // 在下方顯示圖例，使用 Material Design 風格
+            const legendY = barY + barHeight + 24; // 增加間距
+            const legendItemHeight = 28; // 增加間距使圖例更易讀
+            
+            categoriesArray.forEach((item, index) => {
+                const legendItemY = legendY + (index * legendItemHeight);
+                
+                // 繪製顏色圓點 - 使用方形或小圓點更符合 Material Design
+                ctx.fillStyle = chartColors[index];
+                ctx.beginPath();
+                if (index % 2 === 0) { // 多樣化圖例樣式 - 偶數索引使用圓點
+                    ctx.arc(startX + 5, legendItemY, 4, 0, Math.PI * 2);
+                } else { // 奇數索引使用小方塊
+                    ctx.rect(startX + 1, legendItemY - 4, 8, 8);
+                }
+                ctx.fill();
+                
+                // 繪製分類名稱和百分比 - 使用符合 Material Design 的字體樣式
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = '13px Roboto, Arial, sans-serif'; // Material Design 偏好 Roboto 字體
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(`${item.category}`, startX + 14, legendItemY);
+                
+                // 繪製百分比在右側
+                ctx.textAlign = 'right';
+                ctx.fillText(`${item.percentage}%`, containerWidth - 20, legendItemY);
+            });
+            
+            ctx.restore();
+            
+            // 添加圖表的交互功能（懸停提示）- 改為更現代的提示方式
+            chartContainer.onclick = function(evt) {
+                const rect = chartContainer.getBoundingClientRect();
+                const x = evt.clientX - rect.left;
+                const y = evt.clientY - rect.top;
+                
+                // 檢查是否點擊了長條圖
+                if (y >= barY && y <= barY + barHeight && x >= startX && x <= startX + barWidth) {
+                    // 確定點擊了哪個分類
+                    let accumulatedWidth = 0;
+                    for (let i = 0; i < categoriesArray.length; i++) {
+                        const widthPercentage = parseFloat(categoriesArray[i].percentage) / 100;
+                        const segmentWidth = barWidth * widthPercentage;
+                        
+                        if (x >= startX + accumulatedWidth && x <= startX + accumulatedWidth + segmentWidth) {
+                            const item = categoriesArray[i];
+                            showCustomTooltip(item, evt.clientX, evt.clientY);
+                            break;
+                        }
+                        
+                        accumulatedWidth += segmentWidth;
+                    }
+                }
+                
+                // 檢查是否點擊了圖例項目
+                for (let i = 0; i < categoriesArray.length; i++) {
+                    const legendItemY = legendY + (i * legendItemHeight);
+                    
+                    if (y >= legendItemY - 10 && y <= legendItemY + 10 && x >= startX && x <= containerWidth - 20) {
+                        const item = categoriesArray[i];
+                        showCustomTooltip(item, evt.clientX, evt.clientY);
+                        break;
+                    }
+                }
+            };
+            
+            // 自定義更現代的提示框顯示函數
+            function showCustomTooltip(item, clientX, clientY) {
+                // 使用 alert 很不 Material Design，但由於我們沒有自定義 DOM 的能力，暫時保留
+                alert(`${item.category}: ${formatAmount(item.amount)} 元 (${item.percentage}%)\n銷售數量: ${quantityByCategory[item.category]} 份`);
+            }
+            
+            console.log('Category percentage bar chart created with Material Design style');
         } catch (error) {
-            console.error('Error updating category pie chart:', error);
+            console.error('Error updating category chart:', error);
         }
     }
 
@@ -1049,16 +1309,12 @@ class OverviewPage {
                         datasets: [{
                             label: '平均營業額',
                             data: chartData,
-                            backgroundColor: [
-                                'rgba(54, 162, 235, 0.7)',
-                                'rgba(54, 162, 235, 0.7)',
-                                'rgba(54, 162, 235, 0.7)',
-                                'rgba(54, 162, 235, 0.7)',
-                                'rgba(54, 162, 235, 0.7)',
-                                'rgba(54, 162, 235, 0.7)',
-                                'rgba(54, 162, 235, 0.7)',
-                            ],
-                            borderWidth: 1
+                            backgroundColor: '#2196F3', // Material Design 主色藍
+                            borderWidth: 0,
+                            borderRadius: 2, // Material Design 的微小圓角
+                            borderSkipped: false, // 確保圓角應用到所有邊
+                            barPercentage: 0.5, // 讓長條更細些，符合 Material Design 的線條美學
+                            maxBarThickness: 32 // 限制最大寬度
                         }]
                     },
                     options: {
@@ -1069,6 +1325,14 @@ class OverviewPage {
                                 display: false
                             },
                             tooltip: {
+                                backgroundColor: 'rgba(33, 33, 33, 0.8)', // Material Design 深灰色
+                                titleColor: '#FFFFFF',
+                                bodyColor: '#FFFFFF',
+                                borderColor: 'rgba(255, 255, 255, 0.1)',
+                                borderWidth: 1,
+                                padding: 10,
+                                cornerRadius: 4, // Material Design 圓角
+                                displayColors: false,
                                 callbacks: {
                                     label: function(context) {
                                         return `平均營業額: $${formatAmount(context.raw)}`;
@@ -1077,6 +1341,22 @@ class OverviewPage {
                             }
                         },
                         scales: {
+                            x: {
+                                ticks: {
+                                    autoSkip: false,
+                                    maxRotation: 0,  // 取消標籤文字的旋轉
+                                    minRotation: 0,  // 確保標籤保持水平
+                                    color: '#9E9E9E', // Material Design 灰色
+                                    font: {
+                                        size: 12
+                                    },
+                                    padding: 5
+                                },
+                                grid: {
+                                    display: false,  // 隱藏網格線增加現代感
+                                    drawBorder: false
+                                }
+                            },
                             y: {
                                 beginAtZero: true,
                                 min: 0,
@@ -1084,14 +1364,27 @@ class OverviewPage {
                                     callback: function(value) {
                                         return `$${formatAmount(value)}`;
                                     },
-                                    maxTicksLimit: 10
+                                    maxTicksLimit: 5, // 減少刻度數量，增加清晰度
+                                    color: '#9E9E9E',
+                                    font: {
+                                        size: 12
+                                    },
+                                    padding: 8
+                                },
+                                grid: {
+                                    color: 'rgba(200, 200, 200, 0.08)', // 極淡的網格線
+                                    drawBorder: false
                                 },
                                 suggestedMax: function(context) {
                                     const allData = context.chart.data.datasets.flatMap(dataset => dataset.data);
                                     const maxValue = Math.max(...allData);
-                                    return maxValue * 1.2;
+                                    return maxValue * 1.1; // 只預留10%的頂部空間
                                 },
                             }
+                        },
+                        animation: {
+                            duration: 600,  // 更短的動畫時間，符合Material的即時反饋原則
+                            easing: 'easeOutQuad' // Material Design 推薦的緩動函數
                         }
                     }
                 });
