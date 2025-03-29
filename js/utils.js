@@ -67,7 +67,7 @@ function getDayOfWeek(dateString) {
 
 // 获取星期几的中文名称
 function getDayOfWeekName(dayIndex) {
-    const dayNames = ['（日）', '（一）', '（二）', '（三）', '（四）', '（五）', '（六）'];
+    const dayNames = ['日', '一', '二', '三', '四', '五', '六'];
     return dayNames[dayIndex];
 }
 
