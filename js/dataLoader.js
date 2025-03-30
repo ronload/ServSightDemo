@@ -65,8 +65,8 @@ class DataLoader {
     }
 
     /**
-     * 加载所有销售数据
-     * @returns {Promise<Array>} 解析后的销售数据
+     * load all receipts data
+     * @returns {Promise<Array>} data after standardize product name
      */
     async loadAllData() {
         if (this.cachedData) {
@@ -74,14 +74,14 @@ class DataLoader {
         }
 
         try {
-            // 获取所有CSV文件列表
+            // get all csv files
             const csvFiles = await this.getCSVFileList();
             
-            // 加载所有文件数据
+            // load all files data
             const dataPromises = csvFiles.map(file => this.loadCSVFile(file));
             const dataArrays = await Promise.all(dataPromises);
             
-            // 合并所有数据
+            // merge all data
             this.cachedData = dataArrays.flat();
             
             return this.cachedData;
