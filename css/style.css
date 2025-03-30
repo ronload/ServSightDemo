@@ -193,6 +193,49 @@ h4 {
     margin-right: 0;
 }
 
+/* PC 端銷售額排行與分類佔比圖表優化 */
+@media (min-width: 769px) {
+    .charts-row {
+        grid-template-columns: 3fr 1fr;
+        gap: 24px;
+    }
+    
+    /* 銷售額排行優化 */
+    .charts-row .chart-card:first-child {
+        padding: 24px 28px;
+    }
+    
+    /* 分類銷售額佔比優化 */
+    .charts-row .chart-card:last-child {
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .charts-row .chart-card:last-child h3 {
+        margin-bottom: 15px;
+    }
+    
+    .charts-row .chart-card:last-child .chart-content {
+        flex-grow: 1;
+        height: auto;
+        min-height: 0;
+        max-height: 450px;
+        padding: 0;
+    }
+    
+    .charts-row .chart-card h3 {
+        margin-bottom: 20px;
+        font-size: 16px;
+        letter-spacing: 0.5px;
+    }
+    
+    .charts-row .chart-content {
+        height: 580px;
+        padding: 12px 0;
+    }
+}
+
 .chart-card {
     background: var(--card-background);
     border-radius: 16px;

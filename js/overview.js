@@ -741,6 +741,9 @@ class OverviewPage {
                     ctx.save();
                     ctx.font = '13px Roboto, Arial, sans-serif'; // Material Design 偏好 Roboto
                     
+                    // 檢測是否為移動端
+                    const isMobile = window.innerWidth < 768;
+                    
                     meta.data.forEach((bar, index) => {
                         const item = topProducts[index];
                         const formattedAmount = formatAmount(item.amount);
@@ -748,18 +751,30 @@ class OverviewPage {
                         // 獲取長條的位置信息
                         const y = bar.y;
                         
-                        // 在長條左上方顯示產品名稱
+                        // 在長條左上方顯示產品名稱 - PC 端時增加間距
                         ctx.fillStyle = '#FFFFFF';
                         ctx.textAlign = 'left';
                         ctx.textBaseline = 'bottom';
-                        // 名稱位置調整：加大間距
-                        ctx.fillText(item.product, 5, y - 10);
                         
-                        // 在長條最右邊顯示銷售額和份數
-                        ctx.textAlign = 'right';
-                        ctx.fillStyle = '#BDBDBD';  // Material Design 淺灰色
-                        // 銷售額和份數位置調整
-                        ctx.fillText(`$${formattedAmount} (${item.quantity}份)`, chart.chartArea.right - 5, y - 10);
+                        // PC 端特別處理
+                        if (!isMobile) {
+                            // 名稱位置調整：左側增加間距，上方增加間距
+                            ctx.fillText(item.product, 10, y - 14);
+                            
+                            // 在長條最右邊顯示銷售額和份數
+                            ctx.textAlign = 'right';
+                            ctx.fillStyle = '#BDBDBD';  // Material Design 淺灰色
+                            
+                            // 銷售額和份數位置調整：右側增加間距
+                            ctx.fillText(`$${formattedAmount} (${item.quantity}份)`, chart.chartArea.right - 10, y - 14);
+                        } else {
+                            // 移動端保持原來的位置
+                            ctx.fillText(item.product, 5, y - 10);
+                            
+                            ctx.textAlign = 'right';
+                            ctx.fillStyle = '#BDBDBD';
+                            ctx.fillText(`$${formattedAmount} (${item.quantity}份)`, chart.chartArea.right - 5, y - 10);
+                        }
                     });
                     
                     ctx.restore();
@@ -857,7 +872,7 @@ class OverviewPage {
                         },
                         y: {
                             display: false, // 隱藏Y軸刻度
-                            spacing: 16,    // Material Design 偏好 8 的倍數間距
+                            spacing: 8,    // 調整間距，大幅降低原先16的間距
                             border: {
                                 display: false
                             }
@@ -996,9 +1011,12 @@ class OverviewPage {
             // 調整Canvas的繪圖比例
             ctx.scale(dpr, dpr);
             
-            // 計算長條的位置和尺寸
-            const barHeight = 18; // Material Design 偏好較為纖細的元素
-            const barY = 40; // 由於移除了標題，所以將長條向上移
+            // 檢測是否為PC端
+            const isPC = window.innerWidth >= 768;
+            
+            // 計算長條的位置和尺寸 - PC端時長條高度略微縮小以騰出空間
+            const barHeight = isPC ? 16 : 18; // PC端稍微縮小
+            const barY = isPC ? 30 : 40; // PC端上移
             const barWidth = containerWidth - 40;
             const startX = 20;
             
@@ -1039,32 +1057,44 @@ class OverviewPage {
             });
             
             // 在下方顯示圖例，使用 Material Design 風格
-            const legendY = barY + barHeight + 24; // 增加間距
+            const legendY = barY + barHeight + 20; // PC端縮小上方間距
             const legendItemHeight = 28; // 增加間距使圖例更易讀
             
+            // 檢測是否為PC端
+            
+            // PC端圖例調整 - 進一步縮小間距
+            const legendStartX = isPC ? startX + 6 : startX + 5;
+            const circleRadius = isPC ? 5 : 4;
+            const rectSize = isPC ? 10 : 8;
+            const textOffset = isPC ? 18 : 14;
+            const fontSize = isPC ? '14px' : '13px';
+            const legendSpacing = isPC ? 24 : 28; // PC端減少圖例間距
+            
             categoriesArray.forEach((item, index) => {
-                const legendItemY = legendY + (index * legendItemHeight);
+                const legendItemY = legendY + (index * legendSpacing);
                 
                 // 繪製顏色圓點 - 使用方形或小圓點更符合 Material Design
                 ctx.fillStyle = chartColors[index];
                 ctx.beginPath();
                 if (index % 2 === 0) { // 多樣化圖例樣式 - 偶數索引使用圓點
-                    ctx.arc(startX + 5, legendItemY, 4, 0, Math.PI * 2);
+                    ctx.arc(legendStartX, legendItemY, circleRadius, 0, Math.PI * 2);
                 } else { // 奇數索引使用小方塊
-                    ctx.rect(startX + 1, legendItemY - 4, 8, 8);
+                    const rectY = legendItemY - rectSize/2;
+                    ctx.rect(legendStartX - rectSize/2, rectY, rectSize, rectSize);
                 }
                 ctx.fill();
                 
                 // 繪製分類名稱和百分比 - 使用符合 Material Design 的字體樣式
                 ctx.fillStyle = '#FFFFFF';
-                ctx.font = '13px Roboto, Arial, sans-serif'; // Material Design 偏好 Roboto 字體
+                ctx.font = `${fontSize} Roboto, Arial, sans-serif`; // Material Design 偏好 Roboto
                 ctx.textAlign = 'left';
                 ctx.textBaseline = 'middle';
-                ctx.fillText(`${item.category}`, startX + 14, legendItemY);
+                ctx.fillText(`${item.category}`, legendStartX + textOffset, legendItemY);
                 
-                // 繪製百分比在右側
+                // 繪製百分比在右側 - PC端增加間距
+                const rightMargin = isPC ? 25 : 20;
                 ctx.textAlign = 'right';
-                ctx.fillText(`${item.percentage}%`, containerWidth - 20, legendItemY);
+                ctx.fillText(`${item.percentage}%`, containerWidth - rightMargin, legendItemY);
             });
             
             ctx.restore();
