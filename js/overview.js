@@ -985,14 +985,8 @@ class OverviewPage {
                 chartColors.push(colorOptions[index % colorOptions.length]);
             });
             
-            // 創建或更新圖表
-            const ctx = chartContainer.getContext('2d');
-            
-            if (this.categoryPieChart) {
-                // 銷毀舊圖表
-                this.categoryPieChart.destroy();
-                this.categoryPieChart = null;
-            }
+            // 檢測是否為PC端
+            const isPC = window.innerWidth >= 768;
             
             // 清除畫布並設置大小
             const container = chartContainer.parentElement;
@@ -1009,139 +1003,203 @@ class OverviewPage {
             chartContainer.style.height = `${containerHeight}px`;
             
             // 調整Canvas的繪圖比例
+            const ctx = chartContainer.getContext('2d');
             ctx.scale(dpr, dpr);
             
-            // 檢測是否為PC端
-            const isPC = window.innerWidth >= 768;
-            
-            // 計算長條的位置和尺寸 - PC端時長條高度略微縮小以騰出空間
-            const barHeight = isPC ? 16 : 18; // PC端稍微縮小
-            const barY = isPC ? 30 : 40; // PC端上移
-            const barWidth = containerWidth - 40;
-            const startX = 20;
-            
-            // 繪製長條圖
-            ctx.save();
-            
-            // 繪製單一長條，不同顏色區塊代表不同分類
-            let currentX = startX;
-            categoriesArray.forEach((item, index) => {
-                const widthPercentage = parseFloat(item.percentage) / 100;
-                const segmentWidth = barWidth * widthPercentage;
-                
-                // 繪製此分類的區塊
-                ctx.fillStyle = chartColors[index];
-                ctx.beginPath();
-                // Material Design 偏好更小的圓角或直角
-                if (index === 0) { // 第一個區塊（左側）
-                    ctx.moveTo(currentX + 2, barY); // 左上角微小圓角
-                    ctx.lineTo(currentX + segmentWidth, barY);
-                    ctx.lineTo(currentX + segmentWidth, barY + barHeight);
-                    ctx.lineTo(currentX + 2, barY + barHeight);
-                    ctx.arc(currentX + 2, barY + barHeight - 2, 2, Math.PI/2, Math.PI, false); // 左下角微小圓角
-                    ctx.lineTo(currentX, barY + 2);
-                    ctx.arc(currentX + 2, barY + 2, 2, Math.PI, Math.PI*3/2, false); // 左上角微小圓角
-                } else if (index === categoriesArray.length - 1) { // 最後一個區塊（右側）
-                    ctx.moveTo(currentX, barY);
-                    ctx.lineTo(currentX + segmentWidth - 2, barY);
-                    ctx.arc(currentX + segmentWidth - 2, barY + 2, 2, Math.PI*3/2, 0, false); // 右上角微小圓角
-                    ctx.lineTo(currentX + segmentWidth, barY + barHeight - 2);
-                    ctx.arc(currentX + segmentWidth - 2, barY + barHeight - 2, 2, 0, Math.PI/2, false); // 右下角微小圓角
-                    ctx.lineTo(currentX, barY + barHeight);
-                } else { // 中間區塊（無圓角）
-                    ctx.rect(currentX, barY, segmentWidth, barHeight);
-                }
-                ctx.fill();
-                
-                currentX += segmentWidth;
-            });
-            
-            // 在下方顯示圖例，使用 Material Design 風格
-            const legendY = barY + barHeight + 20; // PC端縮小上方間距
-            const legendItemHeight = 28; // 增加間距使圖例更易讀
-            
-            // 檢測是否為PC端
-            
-            // PC端圖例調整 - 進一步縮小間距
-            const legendStartX = isPC ? startX + 6 : startX + 5;
-            const circleRadius = isPC ? 5 : 4;
-            const rectSize = isPC ? 10 : 8;
-            const textOffset = isPC ? 18 : 14;
-            const fontSize = isPC ? '14px' : '13px';
-            const legendSpacing = isPC ? 24 : 28; // PC端減少圖例間距
-            
-            categoriesArray.forEach((item, index) => {
-                const legendItemY = legendY + (index * legendSpacing);
-                
-                // 繪製顏色圓點 - 使用方形或小圓點更符合 Material Design
-                ctx.fillStyle = chartColors[index];
-                ctx.beginPath();
-                if (index % 2 === 0) { // 多樣化圖例樣式 - 偶數索引使用圓點
-                    ctx.arc(legendStartX, legendItemY, circleRadius, 0, Math.PI * 2);
-                } else { // 奇數索引使用小方塊
-                    const rectY = legendItemY - rectSize/2;
-                    ctx.rect(legendStartX - rectSize/2, rectY, rectSize, rectSize);
-                }
-                ctx.fill();
-                
-                // 繪製分類名稱和百分比 - 使用符合 Material Design 的字體樣式
-                ctx.fillStyle = '#FFFFFF';
-                ctx.font = `${fontSize} Roboto, Arial, sans-serif`; // Material Design 偏好 Roboto
-                ctx.textAlign = 'left';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(`${item.category}`, legendStartX + textOffset, legendItemY);
-                
-                // 繪製百分比在右側 - PC端增加間距
-                const rightMargin = isPC ? 25 : 20;
-                ctx.textAlign = 'right';
-                ctx.fillText(`${item.percentage}%`, containerWidth - rightMargin, legendItemY);
-            });
-            
-            ctx.restore();
-            
-            // 添加圖表的交互功能（懸停提示）- 改為更現代的提示方式
-            chartContainer.onclick = function(evt) {
-                const rect = chartContainer.getBoundingClientRect();
-                const x = evt.clientX - rect.left;
-                const y = evt.clientY - rect.top;
-                
-                // 檢查是否點擊了長條圖
-                if (y >= barY && y <= barY + barHeight && x >= startX && x <= startX + barWidth) {
-                    // 確定點擊了哪個分類
-                    let accumulatedWidth = 0;
-                    for (let i = 0; i < categoriesArray.length; i++) {
-                        const widthPercentage = parseFloat(categoriesArray[i].percentage) / 100;
-                        const segmentWidth = barWidth * widthPercentage;
-                        
-                        if (x >= startX + accumulatedWidth && x <= startX + accumulatedWidth + segmentWidth) {
-                            const item = categoriesArray[i];
-                            showCustomTooltip(item, evt.clientX, evt.clientY);
-                            break;
-                        }
-                        
-                        accumulatedWidth += segmentWidth;
-                    }
-                }
-                
-                // 檢查是否點擊了圖例項目
-                for (let i = 0; i < categoriesArray.length; i++) {
-                    const legendItemY = legendY + (i * legendItemHeight);
-                    
-                    if (y >= legendItemY - 10 && y <= legendItemY + 10 && x >= startX && x <= containerWidth - 20) {
-                        const item = categoriesArray[i];
-                        showCustomTooltip(item, evt.clientX, evt.clientY);
-                        break;
-                    }
-                }
-            };
-            
-            // 自定義更現代的提示框顯示函數
-            function showCustomTooltip(item, clientX, clientY) {
-                // 使用 alert 很不 Material Design，但由於我們沒有自定義 DOM 的能力，暫時保留
-                alert(`${item.category}: ${formatAmount(item.amount)} 元 (${item.percentage}%)\n銷售數量: ${quantityByCategory[item.category]} 份`);
+            if (this.categoryPieChart) {
+                this.categoryPieChart.destroy();
+                this.categoryPieChart = null;
             }
             
-            console.log('Category percentage bar chart created with Material Design style');
+            if (isPC) {
+                // PC端使用圓餅圖
+                this.categoryPieChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: categories,
+                        datasets: [{
+                            data: chartData,
+                            backgroundColor: chartColors,
+                            borderColor: 'rgba(0, 0, 0, 0.1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                left: 20,
+                                right: 20,
+                                top: 20,
+                                bottom: 120  // 增加底部空間以容納垂直排列的圖例
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom',
+                                align: 'start',
+                                maxWidth: 1000,
+                                maxHeight: 200,
+                                labels: {
+                                    color: '#FFFFFF',
+                                    padding: 15,
+                                    font: {
+                                        size: 13
+                                    },
+                                    boxWidth: 15,
+                                    boxHeight: 15,
+                                    textAlign: 'left',
+                                    generateLabels: function(chart) {
+                                        const data = chart.data;
+                                        if (data.labels.length && data.datasets.length) {
+                                            return data.labels.map((label, i) => {
+                                                const value = data.datasets[0].data[i];
+                                                const percentage = ((value / totalSales) * 100).toFixed(1);
+                                                return {
+                                                    text: `${label} (${percentage}%)`,
+                                                    fillStyle: data.datasets[0].backgroundColor[i],
+                                                    strokeStyle: data.datasets[0].borderColor,
+                                                    lineWidth: data.datasets[0].borderWidth,
+                                                    hidden: false,
+                                                    index: i
+                                                };
+                                            });
+                                        }
+                                        return [];
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(33, 33, 33, 0.8)',
+                                titleColor: '#FFFFFF',
+                                bodyColor: '#FFFFFF',
+                                borderColor: 'rgba(255, 255, 255, 0.1)',
+                                borderWidth: 1,
+                                padding: 10,
+                                cornerRadius: 4,
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = context.raw;
+                                        const percentage = ((value / totalSales) * 100).toFixed(1);
+                                        return ` ${context.label}: $${formatAmount(value)} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                // 移動端保持原來的橫向條形圖
+                // 繪製長條圖
+                ctx.save();
+                
+                // 繪製單一長條，不同顏色區塊代表不同分類
+                const barHeight = 18;
+                const barY = 40;
+                const barWidth = containerWidth - 40;
+                const startX = 20;
+                
+                let currentX = startX;
+                categoriesArray.forEach((item, index) => {
+                    const widthPercentage = parseFloat(item.percentage) / 100;
+                    const segmentWidth = barWidth * widthPercentage;
+                    
+                    // 繪製此分類的區塊
+                    ctx.fillStyle = chartColors[index];
+                    ctx.beginPath();
+                    if (index === 0) {
+                        ctx.moveTo(currentX + 2, barY);
+                        ctx.lineTo(currentX + segmentWidth, barY);
+                        ctx.lineTo(currentX + segmentWidth, barY + barHeight);
+                        ctx.lineTo(currentX + 2, barY + barHeight);
+                        ctx.arc(currentX + 2, barY + barHeight - 2, 2, Math.PI/2, Math.PI, false);
+                        ctx.lineTo(currentX, barY + 2);
+                        ctx.arc(currentX + 2, barY + 2, 2, Math.PI, Math.PI*3/2, false);
+                    } else if (index === categoriesArray.length - 1) {
+                        ctx.moveTo(currentX, barY);
+                        ctx.lineTo(currentX + segmentWidth - 2, barY);
+                        ctx.arc(currentX + segmentWidth - 2, barY + 2, 2, Math.PI*3/2, 0, false);
+                        ctx.lineTo(currentX + segmentWidth, barY + barHeight - 2);
+                        ctx.arc(currentX + segmentWidth - 2, barY + barHeight - 2, 2, 0, Math.PI/2, false);
+                        ctx.lineTo(currentX, barY + barHeight);
+                    } else {
+                        ctx.rect(currentX, barY, segmentWidth, barHeight);
+                    }
+                    ctx.fill();
+                    
+                    currentX += segmentWidth;
+                });
+                
+                // 在下方顯示圖例
+                const legendY = barY + barHeight + 20;
+                const legendSpacing = 28;
+                const legendStartX = startX + 5;
+                const circleRadius = 4;
+                const rectSize = 8;
+                const textOffset = 14;
+                
+                categoriesArray.forEach((item, index) => {
+                    const legendItemY = legendY + (index * legendSpacing);
+                    
+                    ctx.fillStyle = chartColors[index];
+                    ctx.beginPath();
+                    if (index % 2 === 0) {
+                        ctx.arc(legendStartX, legendItemY, circleRadius, 0, Math.PI * 2);
+                    } else {
+                        const rectY = legendItemY - rectSize/2;
+                        ctx.rect(legendStartX - rectSize/2, rectY, rectSize, rectSize);
+                    }
+                    ctx.fill();
+                    
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.font = '13px Roboto, Arial, sans-serif';
+                    ctx.textAlign = 'left';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(`${item.category}`, legendStartX + textOffset, legendItemY);
+                    
+                    ctx.textAlign = 'right';
+                    ctx.fillText(`${item.percentage}%`, containerWidth - 20, legendItemY);
+                });
+                
+                ctx.restore();
+                
+                // 添加點擊事件處理
+                chartContainer.onclick = function(evt) {
+                    const rect = chartContainer.getBoundingClientRect();
+                    const x = evt.clientX - rect.left;
+                    const y = evt.clientY - rect.top;
+                    
+                    if (y >= barY && y <= barY + barHeight && x >= startX && x <= startX + barWidth) {
+                        let accumulatedWidth = 0;
+                        for (let i = 0; i < categoriesArray.length; i++) {
+                            const widthPercentage = parseFloat(categoriesArray[i].percentage) / 100;
+                            const segmentWidth = barWidth * widthPercentage;
+                            
+                            if (x >= startX + accumulatedWidth && x <= startX + accumulatedWidth + segmentWidth) {
+                                const item = categoriesArray[i];
+                                alert(`${item.category}: ${formatAmount(item.amount)} 元 (${item.percentage}%)\n銷售數量: ${quantityByCategory[item.category]} 份`);
+                                break;
+                            }
+                            
+                            accumulatedWidth += segmentWidth;
+                        }
+                    }
+                    
+                    for (let i = 0; i < categoriesArray.length; i++) {
+                        const legendItemY = legendY + (i * legendSpacing);
+                        if (y >= legendItemY - 10 && y <= legendItemY + 10 && x >= startX && x <= containerWidth - 20) {
+                            const item = categoriesArray[i];
+                            alert(`${item.category}: ${formatAmount(item.amount)} 元 (${item.percentage}%)\n銷售數量: ${quantityByCategory[item.category]} 份`);
+                            break;
+                        }
+                    }
+                };
+            }
+            
+            console.log('Category chart updated successfully');
+            
         } catch (error) {
             console.error('Error updating category chart:', error);
         }
